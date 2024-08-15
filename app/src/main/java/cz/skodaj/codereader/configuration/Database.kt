@@ -1,4 +1,4 @@
-package cz.skodaj.codereader.model.db
+package cz.skodaj.codereader.configuration
 
 /**
  * Object which holds configuration of the database.

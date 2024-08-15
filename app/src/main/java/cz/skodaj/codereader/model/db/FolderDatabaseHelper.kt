@@ -3,6 +3,7 @@ package cz.skodaj.codereader.model.db
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import cz.skodaj.codereader.configuration.Database
 import cz.skodaj.codereader.model.contract.FolderContract
 
 /**
