@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Code Reader</string>
+    <string name="flash_on">Turn on the flashlight</string>
+    <string name="flash_off">Turn off the flashlight</string>
 </resources>

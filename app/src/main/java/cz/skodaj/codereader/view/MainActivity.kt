@@ -7,7 +7,6 @@ import android.content.ContentValues
 import android.content.pm.PackageManager
 import android.os.Build
 import android.provider.MediaStore
-import androidx.camera.core.ImageCapture
 import androidx.camera.video.Recorder
 import androidx.camera.video.Recording
 import androidx.camera.video.VideoCapture
@@ -18,19 +17,20 @@ import java.util.concurrent.Executors
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.lifecycle.ProcessCameraProvider
-import androidx.camera.core.Preview
-import androidx.camera.core.CameraSelector
 import android.util.Log
+import android.view.View
 import androidx.activity.result.ActivityResultLauncher
-import androidx.camera.core.ImageAnalysis
-import androidx.camera.core.ImageCaptureException
-import androidx.camera.core.ImageProxy
+import androidx.camera.core.*
 import androidx.camera.video.FallbackStrategy
 import androidx.camera.video.MediaStoreOutputOptions
 import androidx.camera.video.Quality
 import androidx.camera.video.QualitySelector
 import androidx.camera.video.VideoRecordEvent
 import androidx.core.content.PermissionChecker
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.get
 import com.google.common.util.concurrent.ListenableFuture
 import java.nio.ByteBuffer
 import java.text.SimpleDateFormat
@@ -38,6 +38,8 @@ import java.util.Locale
 
 import cz.skodaj.codereader.databinding.ActivityMainBinding
 import cz.skodaj.codereader.configuration.Android.PERMISSIONS
+import cz.skodaj.codereader.viewmodel.MainViewModel
+import cz.skodaj.codereader.viewmodel.ViewModelFactory
 import java.lang.Exception
 import java.util.concurrent.Future
 
@@ -49,9 +51,21 @@ class MainActivity : AppCompatActivity() {
     private lateinit var viewBinding: ActivityMainBinding
 
     /**
+     * View model of activity.
+     */
+    private val viewModel: MainViewModel by lazy {
+        ViewModelProvider(this, ViewModelFactory()).get(MainViewModel::class.java)
+    }
+
+    /**
      * Executor of camera thread
      */
     private lateinit var cameraExecutor: ExecutorService
+
+    /**
+     * Handler of flash light.
+     */
+    private lateinit var flashlight: FlashlightHelper
 
     /**
      * Checks, whether user allowed all required permissions.
@@ -118,16 +132,39 @@ class MainActivity : AppCompatActivity() {
             val cameraSelector: CameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
             try{
                 cameraProvider.unbindAll()
-                cameraProvider.bindToLifecycle(this, cameraSelector, preview)
+                val camera: Camera = cameraProvider.bindToLifecycle(this, cameraSelector, preview)
+                this.initFlashlight(camera)
             }
             catch (ex: Exception){}
         }, ContextCompat.getMainExecutor(this))
     }
 
+    /**
+     * Initializes flashlight.
+     * @param camera Reference to the camera of the device.
+     */
+    private fun initFlashlight(camera: Camera){
+        this.viewModel.initFlashlight(camera, this)
+        this.viewModel.getFlashlightText().observe(this, Observer{ state ->
+            this.viewBinding.mainTextViewFlashState.setText(state)
+        })
+        this.viewModel.getFlashlightIcon().observe(this, Observer{ icon ->
+            this.viewBinding.mainTextViewFlashIcon.setText(icon)
+        })
+    }
+
+    /**
+     * Handles click on "flashlight" button in the bottom menu.
+     * @param view View which has triggered the event.
+     */
+    public fun mainBottomMenuFlashClicked(view: View){
+        this.viewModel.toggleFlashlight()
+    }
 
     //<editor-fold defaultstate="collapsed" desc="DEFAULT ACTIVITY FUNCTIONS">
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Perform view binding
         super.onCreate(savedInstanceState)
         this.viewBinding = ActivityMainBinding.inflate(this.layoutInflater)
         this.setContentView(this.viewBinding.root)

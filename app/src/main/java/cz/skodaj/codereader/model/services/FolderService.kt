@@ -39,7 +39,7 @@ class FolderService(
                 put(FolderContract.FolderEntry.COLUMN_PARENT, parentId)
             }
             val newId = dbase?.insert(FolderContract.FolderEntry.TABLE_NAME, null, data)
-            if (newId >= 0){
+            if (newId != null && newId >= 0){
                 reti = Folder(newId, name, description, parent)
             }
         }
