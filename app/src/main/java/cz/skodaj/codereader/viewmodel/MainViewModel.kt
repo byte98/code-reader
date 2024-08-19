@@ -2,23 +2,18 @@ package cz.skodaj.codereader.viewmodel
 
 import android.content.Context
 import androidx.camera.core.Camera
-<<<<<<< HEAD
 import androidx.camera.core.ExperimentalGetImage
-=======
->>>>>>> parent of bdf06a2 (Attempt to implement scanner removed)
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import cz.skodaj.codereader.utils.FlashlightHelper
 import cz.skodaj.codereader.utils.ZoomHelper
-<<<<<<< HEAD
 import java.util.*
-=======
->>>>>>> parent of bdf06a2 (Attempt to implement scanner removed)
 
 /**
  * View model of main activity.
  */
+@ExperimentalGetImage
 class MainViewModel: ViewModel() {
 
     /**
@@ -35,6 +30,7 @@ class MainViewModel: ViewModel() {
      * Initializes all camera handlers.
      * @param camera Reference to the camera of the device.
      * @param context Context of the application.
+     * @param executor Executor of camera.
      */
     public fun initCamera(camera: Camera, context: Context){
         this.flashlight = FlashlightHelper(camera, context)
@@ -118,5 +114,6 @@ class MainViewModel: ViewModel() {
             this.flashlight.turnOn()
         }
     }
+
 
 }
