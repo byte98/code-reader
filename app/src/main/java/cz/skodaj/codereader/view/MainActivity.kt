@@ -47,6 +47,7 @@ import java.util.concurrent.Future
 import kotlin.math.roundToInt
 import kotlinx.coroutines.*
 
+@ExperimentalGetImage
 class MainActivity : AppCompatActivity() {
 
     /**
@@ -204,6 +205,7 @@ class MainActivity : AppCompatActivity() {
                 AnimationUtils.loadAnimation(this, R.anim.fade_out)
             )
         })
+
     }
 
     /**

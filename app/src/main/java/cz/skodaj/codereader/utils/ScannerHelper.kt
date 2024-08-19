@@ -9,7 +9,9 @@ import com.google.mlkit.vision.barcode.BarcodeScanner
 import com.google.mlkit.vision.barcode.BarcodeScannerOptions
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.ZoomSuggestionOptions
+import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
+import java.util.concurrent.ExecutorService
 
 /**
  * Class which helps handling code scanner.
@@ -41,7 +43,6 @@ class ScannerHelper: ImageCallback {
                  val image =
                      InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
                  this.callback.processImage(image)
-                 mediaImage.close()
              }
              imageProxy.close()
          }
@@ -50,22 +51,17 @@ class ScannerHelper: ImageCallback {
     /**
      * Options of scanner.
      */
-    private val options: BarcodeScannerOptions
+    private lateinit var options: BarcodeScannerOptions
 
     /**
      * Handler of camera zoom.
      */
-    private val zoom: ZoomHelper
-
-    /**
-     * Reference to the camera of the device.
-     */
-    private val camera: Camera
+    private lateinit var zoom: ZoomHelper
 
     /**
      * Analyzer of input from camera of the device.
      */
-    private val cameraAnalyzer: ScannerHelper.CameraAnalyzer
+    private val cameraAnalyzer: ImageAnalysis
 
     /**
      * ML Kit scanner which processes images.
@@ -73,13 +69,28 @@ class ScannerHelper: ImageCallback {
     private val scanner: BarcodeScanner
 
     /**
-     * Creates new scanner of barcodes.
-     * @param camera Reference to the camera of the device.
-     * @param zoom Handler of camera zoom.
+     * List of handlers of scanned barcodes.
      */
-    public constructor(camera: Camera, zoom: ZoomHelper){
+    private val handlers: MutableList<BarcodesCallback>
+
+    /**
+     * Creates new scanner of barcodes.
+     */
+    public constructor(){
+        this.handlers = mutableListOf<BarcodesCallback>()
+        this.cameraAnalyzer = ImageAnalysis.Builder()
+            .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+            .build()
+        this.scanner = BarcodeScanning.getClient(this.options)
+    }
+
+    /**
+     * Initializes scanner.
+     * @param zoom Handler of camera zoom.
+     * @param executor Executor of camera.
+     */
+    public fun init(zoom: ZoomHelper, executor: ExecutorService){
         this.zoom = zoom
-        this.camera = camera
         this.options = BarcodeScannerOptions.Builder()
             .setZoomSuggestionOptions(
                 ZoomSuggestionOptions.Builder(object: ZoomSuggestionOptions.ZoomCallback{
@@ -93,19 +104,44 @@ class ScannerHelper: ImageCallback {
             )
             .enableAllPotentialBarcodes()
             .build()
-        this.cameraAnalyzer = ScannerHelper.CameraAnalyzer(this)
-        this.scanner = BarcodeScanning.getClient(this.options)
+        this.cameraAnalyzer.setAnalyzer(executor, ScannerHelper.CameraAnalyzer(this))
+    }
+
+    /**
+     * Registers handler of scanned barcode.
+     * @param handler Handler which will be registered.
+     */
+    public fun registerHandler(handler: BarcodesCallback){
+        if (this.handlers.contains(handler) == false){
+            this.handlers.add(handler)
+        }
+    }
+
+    /**
+     * Calls all registered handlers.
+     * @param codes Codes which will be passed to the handlers.
+     */
+    private fun callHandlers(codes: List<Barcode>){
+        for(handler: BarcodesCallback in this.handlers){
+            handler.barcodeScanned(codes)
+        }
     }
 
     /**
      * Gets analyzer of camera input.
      * @return Analyzer of input from camera.
      */
-    public fun getCameraAnalyzer(): ImageAnalysis.Analyzer{
+    public fun getCameraAnalyzer(): ImageAnalysis{
         return this.cameraAnalyzer
     }
 
     public override fun processImage(image: InputImage) {
-
+        this.scanner.process(image)
+            .addOnSuccessListener { barcodes->
+                this.callHandlers(barcodes)
+            }
+            .addOnFailureListener{
+                this.callHandlers(arrayListOf<Barcode>())
+            }
     }
 }
