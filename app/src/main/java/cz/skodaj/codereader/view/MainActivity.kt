@@ -35,6 +35,10 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.google.common.util.concurrent.ListenableFuture
+import com.google.mlkit.vision.barcode.BarcodeScanner
+import com.google.mlkit.vision.barcode.BarcodeScannerOptions
+import com.google.mlkit.vision.barcode.BarcodeScanning
+import com.google.mlkit.vision.barcode.ZoomSuggestionOptions
 import cz.skodaj.codereader.R
 
 import cz.skodaj.codereader.databinding.ActivityMainBinding
@@ -47,7 +51,6 @@ import java.util.concurrent.Future
 import kotlin.math.roundToInt
 import kotlinx.coroutines.*
 
-@ExperimentalGetImage
 class MainActivity : AppCompatActivity() {
 
     /**
@@ -93,6 +96,11 @@ class MainActivity : AppCompatActivity() {
      * Handler of whole application event loop.
      */
     private val handler: Handler = Handler(Looper.getMainLooper())
+
+    /**
+     * Scanner of codes from image.
+     */
+    private lateinit var barcodeScanner: BarcodeScanner
 
     /**
      * Checks, whether user allowed all required permissions.
@@ -159,6 +167,27 @@ class MainActivity : AppCompatActivity() {
             val cameraSelector: CameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
             try{
                 cameraProvider.unbindAll()
+                this.barcodeScanner = BarcodeScanning.getClient(
+                    BarcodeScannerOptions.Builder()
+                        .enableAllPotentialBarcodes()
+                        .setZoomSuggestionOptions(
+                            ZoomSuggestionOptions.Builder(object: ZoomSuggestionOptions.ZoomCallback{
+                                public override fun setZoom(ratio: Float): Boolean {
+                                    this@MainActivity.viewModel.setActualZoomLevel(ratio)
+                                    return true
+                                }
+                            })
+                                .setMaxSupportedZoomRatio(this.viewModel.getZoomMax())
+                                .build()
+                        )
+                        .build()
+                )
+                val analysis: ImageAnalysis = ImageAnalysis.Builder()
+                    .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                    .build()
+                analysis.setAnalyzer(Context, object: ImageAnalysis.Analyzer{
+
+                })
                 val camera: Camera = cameraProvider.bindToLifecycle(this, cameraSelector, preview)
                 this.initCamera(camera)
             }
@@ -205,7 +234,6 @@ class MainActivity : AppCompatActivity() {
                 AnimationUtils.loadAnimation(this, R.anim.fade_out)
             )
         })
-
     }
 
     /**
