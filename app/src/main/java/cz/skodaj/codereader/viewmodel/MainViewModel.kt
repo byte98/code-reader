@@ -3,15 +3,12 @@ package cz.skodaj.codereader.viewmodel
 import android.content.Context
 import androidx.camera.core.Camera
 import androidx.camera.core.ExperimentalGetImage
-import androidx.camera.core.ImageAnalysis
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import cz.skodaj.codereader.utils.FlashlightHelper
-import cz.skodaj.codereader.utils.ScannerHelper
 import cz.skodaj.codereader.utils.ZoomHelper
 import java.util.*
-import java.util.concurrent.ExecutorService
 
 /**
  * View model of main activity.
