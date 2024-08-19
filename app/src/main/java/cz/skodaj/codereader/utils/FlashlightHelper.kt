@@ -1,4 +1,4 @@
-package cz.skodaj.codereader.view
+package cz.skodaj.codereader.utils
 
 import android.content.Context
 import android.content.res.Resources

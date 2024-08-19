@@ -7,10 +7,13 @@ import android.animation.Animator
 import android.animation.AnimatorInflater
 import android.content.ContentValues
 import android.content.pm.PackageManager
+import android.icu.number.Scale
+import android.opengl.Visibility
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.provider.MediaStore
+import android.view.ScaleGestureDetector
 import androidx.camera.video.Recorder
 import androidx.camera.video.Recording
 import androidx.camera.video.VideoCapture
@@ -38,9 +41,11 @@ import cz.skodaj.codereader.databinding.ActivityMainBinding
 import cz.skodaj.codereader.configuration.Android.PERMISSIONS
 import cz.skodaj.codereader.viewmodel.MainViewModel
 import cz.skodaj.codereader.viewmodel.ViewModelFactory
+import kotlinx.coroutines.Job
 import java.lang.Exception
 import java.util.concurrent.Future
 import kotlin.math.roundToInt
+import kotlinx.coroutines.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -67,10 +72,11 @@ class MainActivity : AppCompatActivity() {
      */
     private var bottomMenuDetail = false
 
+
     /**
-     * Runnable which handles animations of zoom bar.
+     * Job which performs hiding of zoom layout.
      */
-    private var zoomRunnable: Runnable? = null
+    private var hideZoomLayoutJob: Job? = null
 
     /**
      * Constant defining precision of zoom seek bar
@@ -80,7 +86,7 @@ class MainActivity : AppCompatActivity() {
     /**
      * Delay between zoom bar show and hide (in milliseconds)
      */
-    private final val ZOOM_DELAY = 1000
+    private final val ZOOM_DELAY: Long = 3000
 
     /**
      * Handler of whole application event loop.
@@ -193,7 +199,40 @@ class MainActivity : AppCompatActivity() {
         this.viewModel.getZoomText().observe(this, Observer{text ->
             this.viewBinding.mainTextViewZoom.setText(text)
         })
+        this.viewModel.getZoomLevel().observe(this, Observer{
+            this.restartHideZoomTimer(
+                AnimationUtils.loadAnimation(this, R.anim.fade_out)
+            )
+        })
     }
+
+    /**
+     * Shows layout with zoom controls.
+     * @param show Animation used to show layout.
+     * @param hide Animation used to hide layout.
+     */
+    private fun showZoomLayout(show: Animation, hide: Animation){
+        this.viewBinding.mainLinearLayoutZoom.apply{
+            visibility = View.VISIBLE
+            startAnimation(show)
+        }
+        this.restartHideZoomTimer(hide)
+    }
+
+    /**
+     * Restarts timer for hiding layout with zoom controls.
+     * @param hide Animation used to hide layout.
+     */
+    private fun restartHideZoomTimer(hide: Animation){
+        this.hideZoomLayoutJob?.cancel()
+        this.hideZoomLayoutJob = CoroutineScope(Dispatchers.Main).launch{
+            delay(this@MainActivity.ZOOM_DELAY)
+            this@MainActivity.viewBinding.mainLinearLayoutZoom.startAnimation(hide)
+            this@MainActivity.viewBinding.mainLinearLayoutZoom.visibility = View.GONE
+        }
+    }
+
+    // <editor-fold defaultstate="collapsed" desc = "BUTTON HANDLERS">
 
     /**
      * Handles click on "flashlight" button in the bottom menu.
@@ -228,42 +267,13 @@ class MainActivity : AppCompatActivity() {
      * @param view View which has triggered the event.
      */
     public fun mainBottomMenuZoomClicked(view: View){
-        val zoomBar: LinearLayout = this.viewBinding.mainLinearLayoutZoom
-        val fadeIn: Animation = AnimationUtils.loadAnimation(this, R.anim.fade_in)
-        val fadeOut: Animation = AnimationUtils.loadAnimation(this, R.anim.fade_out)
-        val dataObserver: Observer<Float> = Observer<Float>{
-            this.restartZoomAnimation(zoomBar, fadeIn, fadeOut)
-        }
-        this.viewModel.getZoomLevel().observe(this, dataObserver)
+        this.showZoomLayout(
+            AnimationUtils.loadAnimation(this, R.anim.fade_in),
+            AnimationUtils.loadAnimation(this, R.anim.fade_out)
+        )
     }
 
-    /**
-     * Restarts and starts zoom animation.
-     * @param zoomBar Zoom bar which animation will be restarted.
-     * @param fadeIn
-     */
-    private fun restartZoomAnimation(zoomBar: LinearLayout, fadeIn: Animation, fadeOut: Animation){
-        this.zoomRunnable?.let{
-            this.handler.removeCallbacks(it)
-        }
-        zoomBar.startAnimation(fadeIn)
-        fadeIn.setAnimationListener(object: Animation.AnimationListener{
-            override fun onAnimationStart(animation: Animation) {
-                // NOP
-            }
-
-            override fun onAnimationEnd(animation: Animation) {
-                this@MainActivity.zoomRunnable = Runnable{
-                    zoomBar.startAnimation(fadeOut)
-                }
-                handler.postDelayed(this@MainActivity.zoomRunnable!!, 1000)
-            }
-
-            override fun onAnimationRepeat(animation: Animation) {
-                // NOP
-            }
-        })
-    }
+    //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="DEFAULT ACTIVITY FUNCTIONS">
 
@@ -273,8 +283,28 @@ class MainActivity : AppCompatActivity() {
         this.viewBinding = ActivityMainBinding.inflate(this.layoutInflater)
         this.setContentView(this.viewBinding.root)
 
-        // Zoom bar
-        this.viewBinding.mainLinearLayoutZoom.alpha = 0.0f
+        // Zoom
+        this.viewBinding.mainLinearLayoutZoom.visibility = View.GONE
+        val listener = object: ScaleGestureDetector.SimpleOnScaleGestureListener(){
+            override fun onScale(detector: ScaleGestureDetector): Boolean {
+                if (this@MainActivity.viewBinding.mainLinearLayoutZoom.visibility != View.VISIBLE){
+                    this@MainActivity.showZoomLayout(
+                        AnimationUtils.loadAnimation(this@MainActivity, R.anim.fade_in),
+                        AnimationUtils.loadAnimation(this@MainActivity, R.anim.fade_out)
+                    )
+                }
+                var scale = this@MainActivity.viewModel.getActualZoomLevel() * detector.scaleFactor
+                if (scale < this@MainActivity.viewModel.getZoomMin()) scale = this@MainActivity.viewModel.getZoomMin()
+                if (scale > this@MainActivity.viewModel.getZoomMax()) scale = this@MainActivity.viewModel.getZoomMax()
+                this@MainActivity.viewModel.setActualZoomLevel(scale)
+                return true
+            }
+        }
+        val scaleGestureDetector: ScaleGestureDetector = ScaleGestureDetector(this, listener)
+        this.viewBinding.mainPreviewView.setOnTouchListener{_, event ->
+            scaleGestureDetector.onTouchEvent(event)
+            return@setOnTouchListener true
+        }
 
         // Set up camera
         if (this.checkPermissions()){

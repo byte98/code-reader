@@ -4,4 +4,5 @@
     <string name="flash_off">Turn off the flashlight</string>
     <string name="show_hide">Show/hide</string>
     <string name="zoom">Zoom</string>
+    <string name="menu">Menu</string>
 </resources>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Background track (gray part) -->
+    <item>
+        <shape>
+            <solid android:color="#7F7F7F" />
+            <size android:height="4dp" />
+            <corners android:radius="0dp" />
+        </shape>
+    </item>
+
+    <!-- Progress track (accent color part) -->
+    <item>
+        <clip>
+            <shape>
+                <solid android:color="?attr/colorAccent" />
+                <size android:height="4dp" />
+                <corners android:radius="0dp" />
+            </shape>
+        </clip>
+    </item>
+</layer-list>

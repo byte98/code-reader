@@ -6,11 +6,13 @@
         <entry key="..\:/owncloud/private/CODES/code-reader/app/src/main/res/drawable-night/circle.xml" value="0.318" />
         <entry key="..\:/owncloud/private/CODES/code-reader/app/src/main/res/drawable/circle.xml" value="0.318" />
         <entry key="..\:/owncloud/private/CODES/code-reader/app/src/main/res/drawable/icon_torch_on.xml" value="0.318" />
+        <entry key="..\:/owncloud/private/CODES/code-reader/app/src/main/res/drawable/seek_progress.xml" value="0.492" />
+        <entry key="..\:/owncloud/private/CODES/code-reader/app/src/main/res/drawable/seek_thumb.xml" value="0.492" />
         <entry key="..\:/owncloud/private/CODES/code-reader/app/src/main/res/font/icons.xml" value="0.3453125" />
         <entry key="..\:/owncloud/private/CODES/code-reader/app/src/main/res/font/selawik.xml" value="0.5864583333333333" />
         <entry key="..\:/owncloud/private/CODES/code-reader/app/src/main/res/font/symbols.xml" value="0.5864583333333333" />
         <entry key="..\:/owncloud/private/CODES/code-reader/app/src/main/res/layout/activity_detail.xml" value="0.5572916666666666" />
-        <entry key="..\:/owncloud/private/CODES/code-reader/app/src/main/res/layout/activity_main.xml" value="0.31614583333333335" />
+        <entry key="..\:/owncloud/private/CODES/code-reader/app/src/main/res/layout/activity_main.xml" value="1.25" />
       </map>
     </option>
   </component>

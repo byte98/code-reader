@@ -5,8 +5,8 @@ import androidx.camera.core.Camera
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
-import cz.skodaj.codereader.view.FlashlightHelper
-import cz.skodaj.codereader.view.ZoomHelper
+import cz.skodaj.codereader.utils.FlashlightHelper
+import cz.skodaj.codereader.utils.ZoomHelper
 
 /**
  * View model of main activity.
