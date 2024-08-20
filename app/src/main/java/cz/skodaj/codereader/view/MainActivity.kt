@@ -9,6 +9,7 @@ import android.content.ContentValues
 import android.content.pm.PackageManager
 import android.graphics.RectF
 import android.icu.number.Scale
+import android.media.Image
 import android.opengl.Visibility
 import android.os.Build
 import android.os.Handler
@@ -161,7 +162,9 @@ class MainActivity : AppCompatActivity() {
             val cameraSelector: CameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
             try{
                 cameraProvider.unbindAll()
-                val camera: Camera = cameraProvider.bindToLifecycle(this, cameraSelector, preview)
+                val analysis: ImageAnalysis = ImageAnalysis.Builder().setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST).build()
+                analysis.setAnalyzer(ContextCompat.getMainExecutor(this), this.viewModel.getScanner())
+                val camera: Camera = cameraProvider.bindToLifecycle(this, cameraSelector, preview, analysis)
                 this.initCamera(camera)
             }
             catch (ex: Exception){}
