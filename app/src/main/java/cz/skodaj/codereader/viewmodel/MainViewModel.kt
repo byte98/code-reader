@@ -7,6 +7,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import cz.skodaj.codereader.utils.FlashlightHelper
+import cz.skodaj.codereader.utils.ScannerHelper
 import cz.skodaj.codereader.utils.ZoomHelper
 import java.util.*
 
@@ -27,14 +28,19 @@ class MainViewModel: ViewModel() {
     private lateinit var zoom: ZoomHelper
 
     /**
+     * Handler of code scanning.
+     */
+    private val scanner: ScannerHelper = ScannerHelper()
+
+    /**
      * Initializes all camera handlers.
      * @param camera Reference to the camera of the device.
      * @param context Context of the application.
-     * @param executor Executor of camera.
      */
     public fun initCamera(camera: Camera, context: Context){
         this.flashlight = FlashlightHelper(camera, context)
         this.zoom = ZoomHelper(camera)
+        this.scanner.init(this.zoom)
     }
 
     /**
@@ -113,6 +119,14 @@ class MainViewModel: ViewModel() {
         else{
             this.flashlight.turnOn()
         }
+    }
+
+    /**
+     * Gets handler of image scanning.
+     * @return Handler of image scanning.
+     */
+    public fun getScanner(): ScannerHelper{
+        return this.scanner
     }
 
 

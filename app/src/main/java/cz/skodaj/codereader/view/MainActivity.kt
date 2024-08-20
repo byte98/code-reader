@@ -7,6 +7,7 @@ import android.animation.Animator
 import android.animation.AnimatorInflater
 import android.content.ContentValues
 import android.content.pm.PackageManager
+import android.graphics.RectF
 import android.icu.number.Scale
 import android.opengl.Visibility
 import android.os.Build
@@ -46,6 +47,7 @@ import java.lang.Exception
 import java.util.concurrent.Future
 import kotlin.math.roundToInt
 import kotlinx.coroutines.*
+import kotlin.math.min
 
 @ExperimentalGetImage
 class MainActivity : AppCompatActivity() {
@@ -232,6 +234,20 @@ class MainActivity : AppCompatActivity() {
             this@MainActivity.viewBinding.mainLinearLayoutZoom.startAnimation(hide)
             this@MainActivity.viewBinding.mainLinearLayoutZoom.visibility = View.GONE
         }
+    }
+
+    /**
+     * Gets default rectangle for preview.
+     * @return Default rectangle for preview.
+     */
+    private fun defaultRectangle(): RectF {
+        val dimension: Float = min(this.viewBinding.mainPreviewView.width.toFloat(), this.viewBinding.mainPreviewView.height.toFloat()) * 0.7f
+        return RectF(
+            (this.viewBinding.mainPreviewView.width.toFloat() / 2f) - (dimension / 2f),
+            (this.viewBinding.mainPreviewView.height.toFloat() / 2f) - (dimension / 2f),
+            (this.viewBinding.mainPreviewView.width.toFloat() / 2f) + (dimension / 2f),
+            (this.viewBinding.mainPreviewView.height.toFloat() / 2f) + (dimension / 2f)
+        )
     }
 
     // <editor-fold defaultstate="collapsed" desc = "BUTTON HANDLERS">
