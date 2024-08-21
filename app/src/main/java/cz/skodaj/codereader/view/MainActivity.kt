@@ -15,6 +15,7 @@ import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.provider.MediaStore
+import android.util.Size
 import android.view.ScaleGestureDetector
 import androidx.camera.video.Recorder
 import androidx.camera.video.Recording
@@ -206,9 +207,25 @@ class MainActivity : AppCompatActivity() {
             this.viewBinding.mainTextViewZoom.setText(text)
         })
         this.viewModel.getZoomLevel().observe(this, Observer{
+            if (this.viewBinding.mainLinearLayoutZoom.visibility != View.VISIBLE){
+                this.showZoomLayout(
+                    AnimationUtils.loadAnimation(this, R.anim.fade_in),
+                    AnimationUtils.loadAnimation(this, R.anim.fade_out)
+                )
+            }
             this.restartHideZoomTimer(
                 AnimationUtils.loadAnimation(this, R.anim.fade_out)
             )
+        })
+
+        // Scanner
+        this.viewModel.getScanner().getCode().observe(this, Observer{ code ->
+            if (code == null){
+                this.viewBinding.mainRectangleView.setRectangle(this.defaultRectangle())
+            }
+            else{
+                this.viewBinding.mainRectangleView.setRectangle(code.position.scaleEnlarge(Size(this.viewBinding.mainPreviewView.width, this.viewBinding.mainPreviewView.height), 1.25f))
+            }
         })
 
     }
@@ -334,6 +351,9 @@ class MainActivity : AppCompatActivity() {
         else{
             this.requestPermissions()
         }
+
+        // Draw rectangle
+        this.viewBinding.mainRectangleView.setRectangle(this.defaultRectangle())
     }
 
     override fun onDestroy() {
