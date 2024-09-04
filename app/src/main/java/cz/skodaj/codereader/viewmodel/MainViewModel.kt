@@ -6,6 +6,9 @@ import androidx.camera.core.ExperimentalGetImage
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
+import cz.skodaj.codereader.model.messaging.Messenger
+import cz.skodaj.codereader.model.messaging.Receiver
+import cz.skodaj.codereader.model.messaging.messages.CodeScannedMessage
 import cz.skodaj.codereader.utils.FlashlightHelper
 import cz.skodaj.codereader.utils.ScannerHelper
 import cz.skodaj.codereader.utils.ZoomHelper

@@ -5,7 +5,10 @@ import android.os.Bundle
 import android.Manifest
 import android.animation.Animator
 import android.animation.AnimatorInflater
+import android.app.ActivityManager
 import android.content.ContentValues
+import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.RectF
 import android.icu.number.Scale
@@ -34,6 +37,7 @@ import android.widget.LinearLayout
 import android.widget.SeekBar
 import androidx.activity.result.ActivityResultLauncher
 import androidx.camera.core.*
+import androidx.core.app.ActivityManagerCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -42,6 +46,8 @@ import cz.skodaj.codereader.R
 
 import cz.skodaj.codereader.databinding.ActivityMainBinding
 import cz.skodaj.codereader.configuration.Android.PERMISSIONS
+import cz.skodaj.codereader.model.messaging.Messenger
+import cz.skodaj.codereader.model.messaging.messages.CodeScannedMessage
 import cz.skodaj.codereader.viewmodel.MainViewModel
 import cz.skodaj.codereader.viewmodel.ViewModelFactory
 import kotlinx.coroutines.Job
@@ -220,11 +226,20 @@ class MainActivity : AppCompatActivity() {
 
         // Scanner
         this.viewModel.getScanner().getCode().observe(this, Observer{ code ->
-            if (code == null){
+            if (code == null) {
                 this.viewBinding.mainRectangleView.setRectangle(this.defaultRectangle())
             }
-            else{
-                this.viewBinding.mainRectangleView.setRectangle(code.position.scaleEnlarge(Size(this.viewBinding.mainPreviewView.width, this.viewBinding.mainPreviewView.height), 1.25f))
+            else {
+                val previewSize = Size(
+                    this.viewBinding.mainPreviewView.width,
+                    this.viewBinding.mainPreviewView.height
+                )
+                val rectF = code.position.toRectangle(previewSize)
+                this.viewBinding.mainRectangleView.setRectangle(rectF)
+                val intent: Intent = Intent(this, DetailActivity::class.java).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                }
+                this.startActivity(intent)
             }
         })
 

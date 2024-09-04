@@ -5,4 +5,11 @@
     <string name="show_hide">Show/hide</string>
     <string name="zoom">Zoom</string>
     <string name="menu">Menu</string>
+    <string name="code_detail">Code detail</string>
+    <string name="type">Type</string>
+    <string name="date">Date and time</string>
+    <string name="data_size">Data size</string>
+    <string name="data">Data</string>
+    <string name="information">Information</string>
+    <string name="source">Source</string>
 </resources>

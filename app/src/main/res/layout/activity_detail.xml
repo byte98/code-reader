@@ -4,15 +4,62 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.DetailActivity">
+    tools:context=".view.DetailActivity" >
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="TextView"
-        app:fontFamily="More Fonts..."
-        tools:layout_editor_absoluteX="94dp"
-        tools:layout_editor_absoluteY="129dp" />
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
+        <LinearLayout
+            android:gravity="center_vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:orientation="horizontal">
+
+            <Button
+                style="@style/BottomMenuButtonStyle"
+                android:background="@drawable/circle"
+                android:fontFamily="@font/symbols"
+                android:textSize="32sp"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:onClick="detailBackButtonClicked"
+                android:text="" />
+
+            <TextView
+                android:layout_marginLeft="16dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="@font/clearsans"
+                android:textSize="32sp"
+                android:textFontWeight="@integer/fontNormal"
+                android:text="@string/code_detail"
+                android:textAllCaps="false" />
+
+        </LinearLayout>
+
+
+        <TextView
+            style="@style/DetailTitleTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/type" />
+
+        <TextView
+            style="@style/DetailValueTextStyle"
+            android:id="@+id/detailTextViewType"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

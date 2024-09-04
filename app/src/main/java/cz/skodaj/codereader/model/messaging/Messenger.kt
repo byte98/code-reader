@@ -1,8 +1,6 @@
-package cz.skodaj.codereader.model
+package cz.skodaj.codereader.model.messaging
 
-import java.lang.reflect.Type
-import kotlin.reflect.KType
-import kotlin.reflect.typeOf
+import kotlin.reflect.KClass
 
 /**
  * Class which delivers messages.
@@ -16,11 +14,11 @@ class Messenger {
 
     /**
      * Registers new receiver of messages.
-     * @param message Example of message which receiver accepts.
+     * @param message Type of messages accepted by receiver.
      * @param receiver Receiver of messages.
      */
-    public fun register(message: Any, receiver: Receiver): Unit{
-        val typeName: String = message::class.qualifiedName ?: "<UNKNOWN>"
+    public fun register(message: KClass<*>, receiver: Receiver): Unit{
+        val typeName: String = message.qualifiedName ?: "<UNKNOWN>"
         if (this.receivers.containsKey(typeName) == false){
             this.receivers.put(typeName, mutableListOf<Receiver>())
         }

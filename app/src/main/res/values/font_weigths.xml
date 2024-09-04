@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="fontThin">100</integer>
+    <integer name="fontLight">300</integer>
+    <integer name="fontNormal">400</integer>
+    <integer name="fontSemibold">600</integer>
+    <integer name="fontBold">700</integer>
+</resources>

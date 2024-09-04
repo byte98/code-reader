@@ -1,4 +1,4 @@
-package cz.skodaj.codereader.model
+package cz.skodaj.codereader.model.messaging
 
 /**
  * Interface which defines contract for all message receivers.
