@@ -86,13 +86,13 @@ class ScannerHelper: ImageAnalysis.Analyzer, Receiver{
     }
 
     override fun analyze(imageProxy: ImageProxy) {
-        if (this.scanned == false) {
-            val mediaImage: Image? = imageProxy.getImage()
-            if (mediaImage != null) {
-                val image: InputImage =
-                    InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
-                val task = this.scanner.process(image)
-                    .addOnSuccessListener {
+        val mediaImage: Image? = imageProxy.getImage()
+        if (mediaImage != null) {
+            val image: InputImage =
+                InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
+            val task = this.scanner.process(image)
+                .addOnSuccessListener {
+                    if (this.scanned == false) {
                         if (it.isNotEmpty()) {
                             val barcode: Barcode = it.first()
                             val rect: Rect? = barcode.boundingBox
@@ -110,23 +110,23 @@ class ScannerHelper: ImageAnalysis.Analyzer, Receiver{
                                         image.mediaImage
                                     )
                                 )
-                                this.scanned = true
+                                Messenger.default.send(CodeScannedMessage(true))
                             } else {
                                 this.code.setValue(null)
                             }
                         } else {
                             this.code.setValue(null)
                         }
-                        imageProxy.close()
                     }
-                    .addOnFailureListener {
-                        this.code.setValue(null)
-                        imageProxy.close()
-                    }
-            } else {
-                this.code.setValue(null)
-                imageProxy.close()
-            }
+                    imageProxy.close()
+                }
+                .addOnFailureListener {
+                    this.code.setValue(null)
+                    imageProxy.close()
+                }
+        } else {
+            this.code.setValue(null)
+            imageProxy.close()
         }
     }
 

@@ -18,6 +18,7 @@ import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.provider.MediaStore
+import android.util.Log
 import android.util.Size
 import android.view.ScaleGestureDetector
 import androidx.camera.video.Recorder
@@ -48,6 +49,7 @@ import cz.skodaj.codereader.databinding.ActivityMainBinding
 import cz.skodaj.codereader.configuration.Android.PERMISSIONS
 import cz.skodaj.codereader.model.messaging.Messenger
 import cz.skodaj.codereader.model.messaging.messages.CodeScannedMessage
+import cz.skodaj.codereader.utils.DateUtils
 import cz.skodaj.codereader.viewmodel.MainViewModel
 import cz.skodaj.codereader.viewmodel.ViewModelFactory
 import kotlinx.coroutines.Job
@@ -55,6 +57,7 @@ import java.lang.Exception
 import java.util.concurrent.Future
 import kotlin.math.roundToInt
 import kotlinx.coroutines.*
+import java.time.LocalTime
 import kotlin.math.min
 
 @ExperimentalGetImage
@@ -331,6 +334,8 @@ class MainActivity : AppCompatActivity() {
     //<editor-fold defaultstate="collapsed" desc="DEFAULT ACTIVITY FUNCTIONS">
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        Log.d(">>>>>", DateUtils.timeToDouble(LocalTime.now()).toString())
+
         // Perform view binding
         super.onCreate(savedInstanceState)
         this.viewBinding = ActivityMainBinding.inflate(this.layoutInflater)
