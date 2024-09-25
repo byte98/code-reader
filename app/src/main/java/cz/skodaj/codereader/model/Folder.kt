@@ -23,6 +23,16 @@ data class Folder(
     /**
      * Parental folder.
      */
-    var parent: Folder? = null
+    var parent: Folder? = Folder.Root
 
-)
+){
+    companion object{
+
+        /**
+         * Root folder of the whole 'filesystem'.
+         */
+        val Root: Folder = Folder(
+            0, "", "", null
+        )
+    }
+}

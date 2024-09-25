@@ -1,6 +1,7 @@
 package cz.skodaj.codereader.model.contract
 
 import android.provider.BaseColumns
+import cz.skodaj.codereader.model.Folder
 
 /**
  * Object which defines contract for table with folders.
@@ -38,7 +39,7 @@ object FolderContract {
         public final const val COLUMN_PARENT: String = "PARENT"
 
         /**
-         * Array with all columns of the table
+         * Array with all columns of the table.
          */
         public final val ALL_COLUMNS: Array<String> = arrayOf(
             FolderContract.FolderEntry.COLUMN_ID,
@@ -58,6 +59,19 @@ object FolderContract {
                     "${FolderContract.FolderEntry.COLUMN_DESCRIPTION} TEXT NOT NULL," +
                     "${FolderContract.FolderEntry.COLUMN_PARENT} INTEGER" +
             ")"
+
+    /**
+     * SQL query which creates root folder.
+     */
+    public final val SQL_CREATE_ROOT: String =
+            "INSERT INTO ${FolderContract.FolderEntry.TABLE_NAME} (" +
+                    "${FolderContract.FolderEntry.COLUMN_ID}, " +
+                    "${FolderContract.FolderEntry.COLUMN_NAME}, " +
+                    "${FolderContract.FolderEntry.COLUMN_DESCRIPTION})" +
+            "VALUES (" +
+                    "${Folder.Root.id}, " +
+                    "'${Folder.Root.name}'," +
+                    "'${Folder.Root.description}')"
 
     /**
      * SQL query which deletes table of folders.
