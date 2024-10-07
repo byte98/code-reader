@@ -1,8 +1,13 @@
 package cz.skodaj.codereader.model
 
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.graphics.Rect
 import android.media.Image
+import androidx.core.graphics.toRect
+import cz.skodaj.codereader.utils.DataSize
+import cz.skodaj.codereader.utils.ImageUtils
+import cz.skodaj.codereader.utils.MapUtils
 import java.time.LocalDateTime
 
 
@@ -10,6 +15,7 @@ import java.time.LocalDateTime
  * Class which holds some basic information about code.
  */
 open class CodeInfo {
+
     /**
      * Date and time of creation.
      */
@@ -46,6 +52,11 @@ open class CodeInfo {
     private val dataFields: Map<String, String>
 
     /**
+     * Size of data stored in code.
+     */
+    private val size: DataSize
+
+    /**
      * Creates new holder of basic information about code.
      * @param creationDate Date and time of creation.
      * @param codeType Type of code.
@@ -53,6 +64,7 @@ open class CodeInfo {
      * @param position Position of the code in the image.
      * @param dataType Type of data stored in code.
      * @param data Data stored in code.
+     * @param size Size of data stored in code.
      * @param dataFields Fields of data stored in code (if available).
      */
     public constructor(
@@ -62,6 +74,7 @@ open class CodeInfo {
         position: Rect,
         dataType: DataType,
         data: String,
+        size: Double,
         dataFields: Map<String, String> = emptyMap()
     ){
         this.creationDate = creationDate
@@ -71,6 +84,7 @@ open class CodeInfo {
         this.dataType = dataType
         this.data = data
         this.dataFields = dataFields
+        this.size = DataSize(size)
     }
 
     /**
@@ -150,6 +164,86 @@ open class CodeInfo {
             reti = this.dataFields.get(name)
         }
         return reti
+    }
+
+    /**
+     * Gets size of data in bytes.
+     * @return Number representing size of data stored in code.
+     */
+    public fun getSize(): Double{
+        return this.size.getSize()
+    }
+
+    /**
+     * Gets size of data in human readable text.
+     * @return String representing size of data stored in code.
+     */
+    public fun getSizeString(): String{
+        return this.size.getCombined()
+    }
+
+    companion object{
+
+        /**
+         * Default width of unknown images (in pixels).
+         */
+        private val UnknownImageWidth: Int = 400
+
+        /**
+         * Default height of unknown images (in pixels).
+         */
+        private val UnknownImageHeight: Int = 400
+
+        /**
+         * Default color of unknown images background.
+         */
+        private val UnknownImageBackground: Color = Color.valueOf(Color.BLACK)
+
+        /**
+         * Default color of unknown images foreground.
+         */
+        private val UnknownImageForeground: Color = Color.valueOf(Color.WHITE)
+
+        /**
+         * Default text in the unknown images.
+         */
+        private val UnknownImageText: String = "?"
+
+        /**
+         * Unknown image.
+         */
+        private val UnknownImage: Bitmap = ImageUtils.textImage(
+            CodeInfo.UnknownImageWidth,
+            CodeInfo.UnknownImageHeight,
+            CodeInfo.UnknownImageBackground,
+            CodeInfo.UnknownImageForeground,
+            CodeInfo.UnknownImageText
+        )
+
+        /**
+         * Creates wrapper of the code information from raw barcode.
+         * @param barcode Raw barcode data.
+         */
+        public fun fromRawbarcode(barcode: RawBarcode): CodeInfo{
+            var image: Bitmap = CodeInfo.UnknownImage
+            if (barcode.image != null){
+                val bcodeImg: Image = barcode.image
+                val bcodeBmap: Bitmap? = ImageUtils.toBitmap(bcodeImg)
+                if (bcodeBmap != null){
+                    image = bcodeBmap
+                }
+            }
+            return CodeInfo(
+                LocalDateTime.now(),
+                CodeType.fromBarcode(barcode.barcode),
+                image,
+                barcode.position.toRectangle().toRect(),
+                DataType.fromBarcode(barcode.barcode),
+                barcode.barcode.rawValue ?: "",
+                barcode.barcode.rawBytes?.size?.toDouble() ?: 0.0,
+                MapUtils.barcodeToMap(barcode.barcode)
+            )
+        }
     }
 
 

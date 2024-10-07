@@ -42,6 +42,7 @@ class Code: CodeInfo{
      * @param position Position of the code in the image.
      * @param dataType Type of data stored in code.
      * @param data Data stored in code.
+     * @param size Size of data stored in code.
      * @param dataFields Fields of data stored in code (if available).
      */
     public constructor(
@@ -55,8 +56,9 @@ class Code: CodeInfo{
         position: Rect,
         dataType: DataType,
         data: String,
+        size: Int,
         dataFields: Map<String, String> = emptyMap()
-    ): super(creationDate, codeType, image, position, dataType, data, dataFields){
+    ): super(creationDate, codeType, image, position, dataType, data, size, dataFields){
         this.id = id
         this.folder = folder
         this.name = name

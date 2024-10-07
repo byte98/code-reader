@@ -12,4 +12,5 @@
     <string name="data">Data</string>
     <string name="information">Information</string>
     <string name="source">Source</string>
+    <string name="unknown">Unknown</string>
 </resources>

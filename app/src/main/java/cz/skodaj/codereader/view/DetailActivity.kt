@@ -7,9 +7,15 @@ import cz.skodaj.codereader.R
 import cz.skodaj.codereader.databinding.ActivityDetailBinding
 import cz.skodaj.codereader.databinding.ActivityMainBinding
 import cz.skodaj.codereader.model.messaging.Messenger
+import cz.skodaj.codereader.model.messaging.Receiver
+import cz.skodaj.codereader.model.messaging.messages.CodeInfoMessage
 import cz.skodaj.codereader.model.messaging.messages.CodeScannedMessage
 
-class DetailActivity : AppCompatActivity() {
+class DetailActivity : AppCompatActivity(), Receiver {
+
+    init{
+        Messenger.default.register(CodeInfoMessage::class, this)
+    }
 
     /**
      * Binding to view itself.
@@ -35,5 +41,9 @@ class DetailActivity : AppCompatActivity() {
      */
     public fun detailBackButtonClicked(view: View){
         this.finish()
+    }
+
+    public override fun receive(message: Any) {
+
     }
 }

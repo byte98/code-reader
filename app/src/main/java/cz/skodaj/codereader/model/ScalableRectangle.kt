@@ -163,7 +163,7 @@ class ScalableRectangle{
      * @param surface Size of output surface to which rectangle should be scaled.
      * @return Rectangle created from actually modified one.
      */
-    public fun toRectangle(surface: Size?): RectF{
+    public fun toRectangle(surface: Size? = null): RectF{
         var reti: ScalableRectangle = this
         if (surface != null && this.origin != null) {
             val scaleX = surface.width.toFloat() / this.origin.width.toFloat()

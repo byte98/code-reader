@@ -59,6 +59,7 @@
         <TextView
             style="@style/DetailValueTextStyle"
             android:id="@+id/detailTextViewType"
+            android:text="@string/unknown"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </LinearLayout>

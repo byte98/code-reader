@@ -47,7 +47,9 @@ import cz.skodaj.codereader.R
 
 import cz.skodaj.codereader.databinding.ActivityMainBinding
 import cz.skodaj.codereader.configuration.Android.PERMISSIONS
+import cz.skodaj.codereader.model.CodeInfo
 import cz.skodaj.codereader.model.messaging.Messenger
+import cz.skodaj.codereader.model.messaging.messages.CodeInfoMessage
 import cz.skodaj.codereader.model.messaging.messages.CodeScannedMessage
 import cz.skodaj.codereader.utils.DateUtils
 import cz.skodaj.codereader.viewmodel.MainViewModel
@@ -243,6 +245,7 @@ class MainActivity : AppCompatActivity() {
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
                 }
                 this.startActivity(intent)
+                Messenger.default.send(CodeInfoMessage(CodeInfo.fromRawbarcode(code)))
             }
         })
 

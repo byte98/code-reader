@@ -73,6 +73,11 @@ object CodeContract {
         public final const val COLUMN_DATAFIELDS: String = "FIELDS"
 
         /**
+         * Name of column with size of data stored in code.
+         */
+        public final const val COLUMN_SIZE: String = "SIZE"
+
+        /**
          * Array with all columns of the table.
          */
         public final val ALL_COLUMNS: Array<String> = arrayOf(
@@ -86,7 +91,8 @@ object CodeContract {
             CodeContract.CodeEntry.COLUMN_POSITION,
             CodeContract.CodeEntry.COLUMN_DATATYPE,
             CodeContract.CodeEntry.COLUMN_DATA,
-            CodeContract.CodeEntry.COLUMN_DATAFIELDS
+            CodeContract.CodeEntry.COLUMN_DATAFIELDS,
+            CodeContract.CodeEntry.COLUMN_SIZE
         )
     }
 
@@ -105,7 +111,8 @@ object CodeContract {
                 "${CodeContract.CodeEntry.COLUMN_POSITION} TEXT NOT NULL, " +
                 "${CodeContract.CodeEntry.COLUMN_DATATYPE} TEXT NOT NULL, " +
                 "${CodeContract.CodeEntry.COLUMN_DATA} TEXT NOT NULL, " +
-                "${CodeContract.CodeEntry.COLUMN_DATAFIELDS} TEXT NOT NULL " +
+                "${CodeContract.CodeEntry.COLUMN_DATAFIELDS} TEXT NOT NULL ," +
+                "${CodeContract.CodeEntry.COLUMN_SIZE} INTEGER NOT NULL" +
         ")"
 
     /**
