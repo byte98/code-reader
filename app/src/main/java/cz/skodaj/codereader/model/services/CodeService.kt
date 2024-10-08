@@ -100,7 +100,7 @@ class CodeService(
         position: Rect,
         dataType: DataType,
         data: String,
-        size: Int,
+        size: Double,
         dataFields: Map<String, String> = emptyMap()
     ): Code?{
         var reti: Code? = null
@@ -265,7 +265,7 @@ class CodeService(
         var rawdataType: String? = null
         var rawdata: String? = null
         var rawdataFields: String? = null
-        var rawSize: Int? = null
+        var rawSize: Double? = null
 
         // Declare variables which holds parsed values from raw data
         var id: Long? = null
@@ -279,7 +279,7 @@ class CodeService(
         var dataType: DataType? = null
         var data: String? = null
         var dataFields: Map<String, String>? = null
-        var size: Int? = null
+        var size: Double? = null
 
         // Read data from cursor
         rawid = cursor.getLongOrNull(cursor.getColumnIndexOrThrow(CodeContract.CodeEntry.COLUMN_ID))
@@ -293,7 +293,7 @@ class CodeService(
         rawdataType = cursor.getStringOrNull(cursor.getColumnIndexOrThrow(CodeContract.CodeEntry.COLUMN_DATATYPE))
         rawdata = cursor.getStringOrNull(cursor.getColumnIndexOrThrow(CodeContract.CodeEntry.COLUMN_DATA))
         rawdataFields = cursor.getStringOrNull(cursor.getColumnIndexOrThrow(CodeContract.CodeEntry.COLUMN_DATAFIELDS))
-        rawSize = cursor.getIntOrNull(cursor.getColumnIndexOrThrow(CodeContract.CodeEntry.COLUMN_SIZE))
+        rawSize = cursor.getDoubleOrNull(cursor.getColumnIndexOrThrow(CodeContract.CodeEntry.COLUMN_SIZE))
 
         // Parse data read from cursor
         if (rawid != null) id = rawid

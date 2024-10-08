@@ -56,7 +56,7 @@ class Code: CodeInfo{
         position: Rect,
         dataType: DataType,
         data: String,
-        size: Int,
+        size: Double,
         dataFields: Map<String, String> = emptyMap()
     ): super(creationDate, codeType, image, position, dataType, data, size, dataFields){
         this.id = id
