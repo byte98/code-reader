@@ -13,4 +13,6 @@
     <string name="information">Information</string>
     <string name="source">Source</string>
     <string name="unknown">Unknown</string>
+    <string name="creation_date">Date of creation</string>
+    <string name="data_type">Data type</string>
 </resources>

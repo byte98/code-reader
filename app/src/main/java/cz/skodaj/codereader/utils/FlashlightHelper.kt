@@ -13,7 +13,7 @@ import org.w3c.dom.Text
 /**
  * Class which helps with handling flashlight.
  */
-class FlashlightHelper {
+class FlashlightHelper: CameraHelper {
 
     /**
      * Text which describes actual state of flashlight.
@@ -55,7 +55,7 @@ class FlashlightHelper {
      * @param camera Reference to device camera.
      * @param context Actual context of the application.
      */
-    constructor(camera: Camera, context: Context){
+    constructor(camera: Camera, context: Context): super(){
         this.camera = camera
         this.context = context
         this.text = MutableLiveData()
@@ -68,8 +68,10 @@ class FlashlightHelper {
      *           when FALSE, flash light will be turned off.
      */
     private fun setHardwareState(on: Boolean){
-        this.isOn = on
-        this.camera.cameraControl.enableTorch(on)
+        if (this.isActive()) {
+            this.isOn = on
+            this.camera.cameraControl.enableTorch(on)
+        }
     }
 
 
@@ -87,20 +89,24 @@ class FlashlightHelper {
      * Turns on the flash light.
      */
     public fun turnOn(){
-        val state: String = this.context.getString(R.string.flash_off)
-        val icon: Char = this.ICON_ON
-        this.setView(state, icon)
-        this.setHardwareState(true)
+        if (this.isActive()) {
+            val state: String = this.context.getString(R.string.flash_off)
+            val icon: Char = this.ICON_ON
+            this.setView(state, icon)
+            this.setHardwareState(true)
+        }
     }
 
     /**
      * Turns off the flash light.
      */
     public fun turnOff(){
-        val state: String = this.context.getString(R.string.flash_on)
-        val icon: Char = this.ICON_OFF
-        this.setView(state, icon)
-        this.setHardwareState(false)
+        if (this.isActive()){
+            val state: String = this.context.getString(R.string.flash_on)
+            val icon: Char = this.ICON_OFF
+            this.setView(state, icon)
+            this.setHardwareState(false)
+        }
     }
 
     /**

@@ -18,13 +18,14 @@ import cz.skodaj.codereader.model.RawBarcode
 import cz.skodaj.codereader.model.ScalableRectangle
 import cz.skodaj.codereader.model.messaging.Messenger
 import cz.skodaj.codereader.model.messaging.Receiver
+import cz.skodaj.codereader.model.messaging.messages.CameraEnabledMessage
 import cz.skodaj.codereader.model.messaging.messages.CodeScannedMessage
 
 /**
  * Class which handles scanner of codes from images.
  */
 @ExperimentalGetImage
-class ScannerHelper: ImageAnalysis.Analyzer, Receiver{
+class ScannerHelper: CameraHelper, ImageAnalysis.Analyzer, Receiver{
 
     /**
      * Actually scanned code.
@@ -42,14 +43,10 @@ class ScannerHelper: ImageAnalysis.Analyzer, Receiver{
     private lateinit var zoom: ZoomHelper
 
     /**
-     * Flag, whether code has been scanned.
-     */
-    private var scanned: Boolean = false
-
-    /**
      * Creates new handler of image scanning for codes.
      */
-    public constructor(){
+    public constructor(): super(){
+        Messenger.default.register(CameraEnabledMessage::class, this)
         this.code = MutableLiveData<RawBarcode?>();
         this.code.setValue(null)
     }
@@ -59,7 +56,6 @@ class ScannerHelper: ImageAnalysis.Analyzer, Receiver{
      * @param zoom Handler of camera zoom.
      */
     public fun init(zoom: ZoomHelper){
-        Messenger.default.register(CodeScannedMessage::class, this)
         this.zoom = zoom
         this.scanner = BarcodeScanning.getClient(BarcodeScannerOptions.Builder()
             .setZoomSuggestionOptions(ZoomSuggestionOptions.Builder(object: ZoomSuggestionOptions.ZoomCallback{
@@ -86,13 +82,13 @@ class ScannerHelper: ImageAnalysis.Analyzer, Receiver{
     }
 
     override fun analyze(imageProxy: ImageProxy) {
-        val mediaImage: Image? = imageProxy.getImage()
-        if (mediaImage != null) {
-            val image: InputImage =
-                InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
-            val task = this.scanner.process(image)
-                .addOnSuccessListener {
-                    if (this.scanned == false) {
+        if (this.isActive()) {
+            val mediaImage: Image? = imageProxy.getImage()
+            if (mediaImage != null) {
+                val image: InputImage =
+                    InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
+                val task = this.scanner.process(image)
+                    .addOnSuccessListener {
                         if (it.isNotEmpty()) {
                             val barcode: Barcode = it.first()
                             val rect: Rect? = barcode.boundingBox
@@ -117,22 +113,19 @@ class ScannerHelper: ImageAnalysis.Analyzer, Receiver{
                         } else {
                             this.code.setValue(null)
                         }
+                        imageProxy.close()
                     }
-                    imageProxy.close()
-                }
-                .addOnFailureListener {
-                    this.code.setValue(null)
-                    imageProxy.close()
-                }
-        } else {
-            this.code.setValue(null)
-            imageProxy.close()
+                    .addOnFailureListener {
+                        this.code.setValue(null)
+                        imageProxy.close()
+                    }
+            } else {
+                this.code.setValue(null)
+                imageProxy.close()
+            }
         }
-    }
-
-    override fun receive(message: Any) {
-        if (message::class == CodeScannedMessage::class){
-            this.scanned = (message as CodeScannedMessage).scanned
+        else{
+            imageProxy.close()
         }
     }
 }

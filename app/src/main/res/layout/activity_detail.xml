@@ -19,6 +19,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+        <!-- Upper navigation bar -->
+
         <LinearLayout
             android:gravity="center_vertical"
             android:layout_width="match_parent"
@@ -50,17 +52,66 @@
         </LinearLayout>
 
 
-        <TextView
-            style="@style/DetailTitleTextStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/type" />
+        <!-- Content -->
+        <ScrollView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <TextView
+                    style="@style/DetailTitleTextStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/type" />
 
-        <TextView
-            style="@style/DetailValueTextStyle"
-            android:id="@+id/detailTextViewType"
-            android:text="@string/unknown"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+                <TextView
+                    style="@style/DetailValueTextStyle"
+                    android:id="@+id/detailTextViewType"
+                    android:text="@string/unknown"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    style="@style/DetailTitleTextStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/creation_date" />
+
+                <TextView
+                    style="@style/DetailValueTextStyle"
+                    android:id="@+id/detailTextViewDate"
+                    android:text="@string/unknown"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    style="@style/DetailTitleTextStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/data_type" />
+
+                <TextView
+                    style="@style/DetailValueTextStyle"
+                    android:id="@+id/detailTextViewDataType"
+                    android:text="@string/unknown"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    style="@style/DetailTitleTextStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/data_size" />
+
+                <TextView
+                    style="@style/DetailValueTextStyle"
+                    android:id="@+id/detailTextViewDataSize"
+                    android:text="@string/unknown"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+        </ScrollView>
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

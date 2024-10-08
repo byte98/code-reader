@@ -49,6 +49,7 @@ import cz.skodaj.codereader.databinding.ActivityMainBinding
 import cz.skodaj.codereader.configuration.Android.PERMISSIONS
 import cz.skodaj.codereader.model.CodeInfo
 import cz.skodaj.codereader.model.messaging.Messenger
+import cz.skodaj.codereader.model.messaging.messages.CameraEnabledMessage
 import cz.skodaj.codereader.model.messaging.messages.CodeInfoMessage
 import cz.skodaj.codereader.model.messaging.messages.CodeScannedMessage
 import cz.skodaj.codereader.utils.DateUtils
@@ -244,8 +245,11 @@ class MainActivity : AppCompatActivity() {
                 val intent: Intent = Intent(this, DetailActivity::class.java).apply {
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
                 }
+                Messenger.default.send(CameraEnabledMessage(enabled = false))
+                Messenger.default.sendDelayed(DetailActivity::class, CodeInfoMessage(
+                    CodeInfo.fromRawbarcode(code)
+                ))
                 this.startActivity(intent)
-                Messenger.default.send(CodeInfoMessage(CodeInfo.fromRawbarcode(code)))
             }
         })
 
@@ -337,8 +341,6 @@ class MainActivity : AppCompatActivity() {
     //<editor-fold defaultstate="collapsed" desc="DEFAULT ACTIVITY FUNCTIONS">
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        Log.d(">>>>>", DateUtils.timeToDouble(LocalTime.now()).toString())
-
         // Perform view binding
         super.onCreate(savedInstanceState)
         this.viewBinding = ActivityMainBinding.inflate(this.layoutInflater)

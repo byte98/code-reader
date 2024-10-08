@@ -4,6 +4,8 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.Rect
 import android.media.Image
+import android.os.Parcel
+import android.os.Parcelable
 import androidx.core.graphics.toRect
 import cz.skodaj.codereader.utils.DataSize
 import cz.skodaj.codereader.utils.ImageUtils

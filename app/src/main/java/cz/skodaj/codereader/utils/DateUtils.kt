@@ -1,13 +1,13 @@
 package cz.skodaj.codereader.utils
 
-import cz.skodaj.codereader.utils.DateUtils.dec
+import android.content.Context
+import android.text.format.DateFormat
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import kotlin.math.abs
 import kotlin.math.log10
 import kotlin.math.pow
-import kotlin.math.ulp
 
 /**
  * Object which holds utility functions to works with dates and times.
@@ -142,5 +142,17 @@ object DateUtils {
      */
     public fun datetimeFromDouble(double: Double): LocalDateTime{
         return LocalDateTime.of(this.dateFromDouble(double), this.timeFromDouble(double))
+    }
+
+    /**
+     * Formats date according to the context.
+     * @param date Date which will be formatted.
+     * @param context Actual context according to which date will be formatted.
+     * @return String representing date formatted according to the context.
+     */
+    public fun format(date: LocalDateTime, context: Context): String{
+        val dateFormat = DateFormat.getDateFormat(context)
+        return dateFormat.format(date)
+
     }
 }

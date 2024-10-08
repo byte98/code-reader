@@ -7,13 +7,17 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.Transformations
+import cz.skodaj.codereader.model.messaging.Messenger
+import cz.skodaj.codereader.model.messaging.Receiver
+import cz.skodaj.codereader.model.messaging.messages.CameraEnabledMessage
+import cz.skodaj.codereader.model.messaging.messages.CodeScannedMessage
 import kotlin.math.roundToInt
 
 
 /**
  * Class which handles zoom of camera.
  */
-class ZoomHelper {
+class ZoomHelper: CameraHelper {
 
     /**
      * Reference to device camera.
@@ -34,7 +38,8 @@ class ZoomHelper {
      * Creates new handler of camera zoom.
      * @param camera Reference to the camera of the device.
      */
-    constructor(camera: Camera){
+    constructor(camera: Camera): super(){
+        Messenger.default.register(CameraEnabledMessage::class, this)
         this.camera = camera
         this.zoom = MutableLiveData<Float>()
         this.zoom.setValue(this.camera.cameraInfo.zoomState?.value?.zoomRatio ?: 1f)
@@ -98,8 +103,10 @@ class ZoomHelper {
      * @param level New level of zoom.
      */
     public fun setLevel(level: Float){
-        this.zoom.setValue(level)
-        this.setHardware(level)
+        if (this.isActive()) {
+            this.zoom.setValue(level)
+            this.setHardware(level)
+        }
     }
 
     /**
@@ -109,4 +116,5 @@ class ZoomHelper {
     private fun setHardware(level: Float){
         this.camera.cameraControl.setZoomRatio(level)
     }
+
 }
