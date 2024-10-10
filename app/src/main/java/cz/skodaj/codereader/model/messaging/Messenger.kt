@@ -8,9 +8,25 @@ import kotlin.reflect.KClass
 class Messenger {
 
     /**
+     * Class which holds some basic information about receiver of messages.
+     */
+    private data class ReceiverInfo(
+
+        /**
+         * Reference to receiver of the message itself.
+         */
+        private val receiver: Receiver,
+
+        /**
+         * Flag, whether receiver should receive just one message
+         */
+        private val receiveOnce: Boolean
+    )
+
+    /**
      * Map which maps type of message to its receivers.
      */
-    private val receivers: MutableMap<KClass<*>, MutableList<Receiver>> = mutableMapOf<KClass<*>, MutableList<Receiver>>()
+    private val receivers: MutableMap<KClass<*>, MutableList<Messenger.ReceiverInfo>> = mutableMapOf<KClass<*>, MutableList<Messenger.ReceiverInfo>>()
 
 
     /**
@@ -26,11 +42,24 @@ class Messenger {
      */
     public fun register(message: KClass<*>, receiver: Receiver): Unit{
         if (this.receivers.containsKey(message) == false){
-            this.receivers.put(message, mutableListOf<Receiver>())
+            this.receivers.put(message, mutableListOf<Messenger.ReceiverInfo>())
         }
         if (this.receivers.get(message)?.contains(receiver) == false){
             this.receivers.get(message)?.add(receiver)
         }
+    }
+
+    public fun receiveOnce(message: KClass<*>, receiver: KClass<*>){
+
+    }
+
+    /**
+     * Unregisteres receiver of messages.
+     * @param message Type of message.
+     * @param receiver Receiver which will be unregistered.
+     */
+    public fun unregister(message: KClass<*>, receiver: Receiver){
+
     }
 
     /**
@@ -68,8 +97,10 @@ class Messenger {
      */
     public fun hasMessage(receiver: Any, message: KClass<*>): Boolean{
         var reti: Boolean = false
-        if (this.delayedMessages.containsKey(receiver::class)){
-            for (msg in this.delayedMessages.get(receiver) ?: emptyList<DelayedMessage>()){
+        val rec: KClass<*> = receiver::class
+        if (this.delayedMessages.containsKey(rec)){
+            val messages: List<DelayedMessage> = this.delayedMessages.get(rec) ?: emptyList()
+            for (msg in messages){
                 if (msg.isContent(message)){
                     reti = true
                     break
@@ -88,18 +119,20 @@ class Messenger {
      */
     public fun getMessage(receiver: Any, message: KClass<*>): Any?{
         var reti: Any? = null
-        var delayedMessage: DelayedMessage? = null
-        if (this.delayedMessages.containsKey(receiver::class)){
-            for (msg in this.delayedMessages.get(receiver) ?: emptyList<DelayedMessage>()){
+        var ms: DelayedMessage? = null
+        val rec: KClass<*> = receiver::class
+        if (this.delayedMessages.containsKey(rec)){
+            val messages: List<DelayedMessage> = this.delayedMessages.get(rec) ?: emptyList()
+            for (msg in messages){
                 if (msg.isContent(message)){
                     reti = msg.getContent()
-                    delayedMessage = msg
+                    ms = msg
                     break
                 }
             }
         }
-        if (delayedMessage != null){
-            this.removeDelayedMessage(receiver::class, delayedMessage)
+        if (ms != null){
+            this.removeDelayedMessage(rec, ms)
         }
         return reti
     }

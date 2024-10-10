@@ -34,8 +34,9 @@ class DetailActivity : AppCompatActivity(), Receiver {
         this.setContentView(this.viewBinding.root)
 
         // Check for the content of the view in the messenger
-        while(Messenger.default.hasMessage(this, CodeInfoMessage::class)){
-            var message: Any? = Messenger.default.getMessage(this, CodeInfoMessage::class)
+        val messenger: Messenger = Messenger.default
+        while(messenger.hasMessage(this, CodeInfoMessage::class)){
+            var message: Any? = messenger.getMessage(this, CodeInfoMessage::class)
             if (message != null){
                 this.receive(message)
             }
@@ -71,7 +72,6 @@ class DetailActivity : AppCompatActivity(), Receiver {
      * @param info Object with information about code.
      */
     private fun initCodeInfo(info: CodeInfo){
-        Log.d("CODEREADER", ">>>>>>>>>> INITIALIZATION")
         this.viewBinding.detailTextViewDate.text = DateUtils.format(info.getCreationDate(), this)
         this.viewBinding.detailTextViewType.text = this.getString(this.resources.getIdentifier("ct_${info.getCodeType().toString()}", "string", this.packageName))
         this.viewBinding.detailTextViewDataType.text = this.getString(this.resources.getIdentifier("dt_${info.getDataType().toString()}", "string", this.packageName))
