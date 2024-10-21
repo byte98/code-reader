@@ -13,6 +13,7 @@ import cz.skodaj.codereader.model.messaging.Messenger
 import cz.skodaj.codereader.model.messaging.Receiver
 import cz.skodaj.codereader.model.messaging.messages.CodeInfoMessage
 import cz.skodaj.codereader.model.messaging.messages.CodeScannedMessage
+import cz.skodaj.codereader.model.messaging.messages.DetailActivityFinishedMessage
 import cz.skodaj.codereader.utils.DateUtils
 
 class DetailActivity : AppCompatActivity(), Receiver {
@@ -44,11 +45,8 @@ class DetailActivity : AppCompatActivity(), Receiver {
     }
 
     override fun finish() {
-        // TODO: Enable camera
-        //       Has to resolve when?
-        //       Why? Because this activity is supposed to run not only from "main activity"
-        //       (aka scanner itself) but also from other different parts of application.
         super.finish()
+        Messenger.default.send(DetailActivityFinishedMessage())
     }
 
     /**

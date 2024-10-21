@@ -15,12 +15,12 @@ class Messenger {
         /**
          * Reference to receiver of the message itself.
          */
-        private val receiver: Receiver,
+        val receiver: Receiver,
 
         /**
          * Flag, whether receiver should receive just one message
          */
-        private val receiveOnce: Boolean
+        val receiveOnce: Boolean
     )
 
     /**
@@ -44,22 +44,37 @@ class Messenger {
         if (this.receivers.containsKey(message) == false){
             this.receivers.put(message, mutableListOf<Messenger.ReceiverInfo>())
         }
-        if (this.receivers.get(message)?.contains(receiver) == false){
-            this.receivers.get(message)?.add(receiver)
-        }
-    }
-
-    public fun receiveOnce(message: KClass<*>, receiver: KClass<*>){
-
+        this.receivers.get(message)?.add(Messenger.ReceiverInfo(receiver, false))
     }
 
     /**
-     * Unregisteres receiver of messages.
+     * Registers new receiver of one single message.
+     * @param message Type of message accepted once by receiver.
+     * @param receiver Receiver of messages.
+     */
+    public fun registerOnce(message: KClass<*>, receiver: Receiver){
+        if (this.receivers.containsKey(message) == false){
+            this.receivers.put(message, mutableListOf<Messenger.ReceiverInfo>())
+        }
+        this.receivers.get(message)?.add(Messenger.ReceiverInfo(receiver, true))
+    }
+
+    /**
+     * Unregisters receiver of messages.
      * @param message Type of message.
      * @param receiver Receiver which will be unregistered.
      */
     public fun unregister(message: KClass<*>, receiver: Receiver){
-
+        if (this.receivers.containsKey(message)){
+            val list: List<Messenger.ReceiverInfo> = this.receivers.get(message) ?: listOf()
+            val newList: MutableList<Messenger.ReceiverInfo> = mutableListOf()
+            for(info: Messenger.ReceiverInfo in list){
+                if (info.receiver != receiver){
+                    newList.add(info)
+                }
+            }
+            this.receivers.replace(message, newList)
+        }
     }
 
     /**
@@ -69,9 +84,16 @@ class Messenger {
     public fun send(message: Any){
         val msgType: KClass<*> = message::class
         if (this.receivers.containsKey(msgType)){
-            val receivers: List<Receiver> = this.receivers.get(msgType) ?: listOf()
-            for (rec: Receiver in receivers){
-                rec.receive(message)
+            val receivers: List<Messenger.ReceiverInfo> = this.receivers.get(msgType) ?: listOf()
+            val toUnregister: MutableList<Pair<KClass<*>, Receiver>> = mutableListOf()
+            for (rec: Messenger.ReceiverInfo in receivers){
+                rec.receiver.receive(message)
+                if (rec.receiveOnce == true){
+                    toUnregister.add(Pair(msgType, rec.receiver))
+                }
+            }
+            for (un: Pair<KClass<*>, Receiver> in toUnregister){
+                this.unregister(un.first, un.second)
             }
         }
     }

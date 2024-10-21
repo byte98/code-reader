@@ -152,6 +152,8 @@ object DateUtils {
      */
     public fun format(date: LocalDateTime, context: Context): String{
         val dateFormat = DateFormat.getDateFormat(context)
+        // TODO: This does not work properly!
+
         return dateFormat.format(date)
 
     }

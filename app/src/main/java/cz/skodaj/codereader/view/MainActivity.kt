@@ -49,9 +49,11 @@ import cz.skodaj.codereader.databinding.ActivityMainBinding
 import cz.skodaj.codereader.configuration.Android.PERMISSIONS
 import cz.skodaj.codereader.model.CodeInfo
 import cz.skodaj.codereader.model.messaging.Messenger
+import cz.skodaj.codereader.model.messaging.Receiver
 import cz.skodaj.codereader.model.messaging.messages.CameraEnabledMessage
 import cz.skodaj.codereader.model.messaging.messages.CodeInfoMessage
 import cz.skodaj.codereader.model.messaging.messages.CodeScannedMessage
+import cz.skodaj.codereader.model.messaging.messages.DetailActivityFinishedMessage
 import cz.skodaj.codereader.utils.DateUtils
 import cz.skodaj.codereader.viewmodel.MainViewModel
 import cz.skodaj.codereader.viewmodel.ViewModelFactory
@@ -249,6 +251,12 @@ class MainActivity : AppCompatActivity() {
                 Messenger.default.sendDelayed(DetailActivity::class, CodeInfoMessage(
                     CodeInfo.fromRawbarcode(code)
                 ))
+                Messenger.default.registerOnce(DetailActivityFinishedMessage::class,
+                    object : Receiver {
+                        override fun receive(message: Any) {
+                            Messenger.default.send(CameraEnabledMessage(enabled = true))
+                        }
+                    })
                 this.startActivity(intent)
             }
         })
