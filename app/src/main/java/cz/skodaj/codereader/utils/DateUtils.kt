@@ -1,7 +1,10 @@
 package cz.skodaj.codereader.utils
 
 import android.content.Context
-import android.text.format.DateFormat
+import cz.skodaj.codereader.model.preferences.DateFormat
+import cz.skodaj.codereader.model.preferences.PreferencesSet
+import cz.skodaj.codereader.model.preferences.TimeFormat
+import java.lang.StringBuilder
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -151,10 +154,13 @@ object DateUtils {
      * @return String representing date formatted according to the context.
      */
     public fun format(date: LocalDateTime, context: Context): String{
-        val dateFormat = DateFormat.getDateFormat(context)
-        // TODO: This does not work properly!
-
-        return dateFormat.format(date)
-
+        val prefs: PreferencesSet = PreferencesSet(context)
+        val timeFormat: TimeFormat = prefs.timeFormat
+        val dateFormat: DateFormat = prefs.dateFormat
+        val reti: StringBuilder = StringBuilder()
+        reti.append(dateFormat.format(date.toLocalDate()))
+        reti.append(' ')
+        reti.append(timeFormat.format(date.toLocalTime()))
+        return reti.toString()
     }
 }

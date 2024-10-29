@@ -4,6 +4,7 @@ import android.content.Context
 import android.database.sqlite.SQLiteOpenHelper
 import cz.skodaj.codereader.model.services.CodeService
 import cz.skodaj.codereader.model.services.FolderService
+import cz.skodaj.codereader.model.services.PreferenceService
 import kotlin.reflect.KClass
 
 /**
@@ -50,6 +51,17 @@ class DatabaseFactory {
         this.connections.add(db)
         return CodeService(db, this.folders())
     }
+
+    /**
+     * Creates new connection to the table with preferences.
+     * @return Service which handles communication with table with preferences.
+     */
+    public fun preferences(): PreferenceService{
+        val db: PreferenceDatabaseHelper = PreferenceDatabaseHelper(this.context)
+        this.connections.add(db)
+        return PreferenceService(db)
+    }
+
 
     /**
      * Closes all created connections.
