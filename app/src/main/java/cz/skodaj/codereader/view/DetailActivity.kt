@@ -11,9 +11,7 @@ import cz.skodaj.codereader.databinding.ActivityMainBinding
 import cz.skodaj.codereader.model.CodeInfo
 import cz.skodaj.codereader.model.messaging.Messenger
 import cz.skodaj.codereader.model.messaging.Receiver
-import cz.skodaj.codereader.model.messaging.messages.CodeInfoMessage
-import cz.skodaj.codereader.model.messaging.messages.CodeScannedMessage
-import cz.skodaj.codereader.model.messaging.messages.DetailActivityFinishedMessage
+import cz.skodaj.codereader.model.messaging.messages.*
 import cz.skodaj.codereader.utils.DateUtils
 
 class DetailActivity : AppCompatActivity(), Receiver {
@@ -28,6 +26,8 @@ class DetailActivity : AppCompatActivity(), Receiver {
     private lateinit var viewBinding: ActivityDetailBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        Messenger.default.send(ActivityStartedMessage(this))
 
         // Perform view binding
         super.onCreate(savedInstanceState)
@@ -47,6 +47,7 @@ class DetailActivity : AppCompatActivity(), Receiver {
     override fun finish() {
         super.finish()
         Messenger.default.send(DetailActivityFinishedMessage())
+        Messenger.default.send(ActivityFinishedMessage(this))
     }
 
     /**

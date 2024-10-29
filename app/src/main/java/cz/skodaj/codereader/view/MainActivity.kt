@@ -48,12 +48,11 @@ import cz.skodaj.codereader.R
 import cz.skodaj.codereader.databinding.ActivityMainBinding
 import cz.skodaj.codereader.configuration.Android.PERMISSIONS
 import cz.skodaj.codereader.model.CodeInfo
+import cz.skodaj.codereader.model.db.DatabaseFactory
 import cz.skodaj.codereader.model.messaging.Messenger
 import cz.skodaj.codereader.model.messaging.Receiver
-import cz.skodaj.codereader.model.messaging.messages.CameraEnabledMessage
-import cz.skodaj.codereader.model.messaging.messages.CodeInfoMessage
-import cz.skodaj.codereader.model.messaging.messages.CodeScannedMessage
-import cz.skodaj.codereader.model.messaging.messages.DetailActivityFinishedMessage
+import cz.skodaj.codereader.model.messaging.messages.*
+import cz.skodaj.codereader.utils.AppStateMonitor
 import cz.skodaj.codereader.utils.DateUtils
 import cz.skodaj.codereader.viewmodel.MainViewModel
 import cz.skodaj.codereader.viewmodel.ViewModelFactory
@@ -349,6 +348,14 @@ class MainActivity : AppCompatActivity() {
     //<editor-fold defaultstate="collapsed" desc="DEFAULT ACTIVITY FUNCTIONS">
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Disconnect from the database when application is finished
+        AppStateMonitor.addFinisher {
+            DatabaseFactory.closeAll()
+        }
+
+        // Inform about start of the activity
+        Messenger.default.send(ActivityStartedMessage(this))
+
         // Perform view binding
         super.onCreate(savedInstanceState)
         this.viewBinding = ActivityMainBinding.inflate(this.layoutInflater)
@@ -387,11 +394,17 @@ class MainActivity : AppCompatActivity() {
 
         // Draw rectangle
         this.viewBinding.mainRectangleView.setRectangle(this.defaultRectangle())
+
     }
 
     override fun onDestroy() {
         super.onDestroy()
         this.cameraExecutor.shutdown()
+    }
+
+    override fun finish(){
+        super.finish()
+        Messenger.default.send(ActivityFinishedMessage(this))
     }
 
     //</editor-fold>
