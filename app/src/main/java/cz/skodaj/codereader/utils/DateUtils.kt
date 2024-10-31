@@ -8,6 +8,7 @@ import java.lang.StringBuilder
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 import kotlin.math.abs
 import kotlin.math.log10
 import kotlin.math.pow
@@ -148,19 +149,83 @@ object DateUtils {
     }
 
     /**
-     * Formats date according to the context.
+     * Formats date according to the format.
      * @param date Date which will be formatted.
-     * @param context Actual context according to which date will be formatted.
-     * @return String representing date formatted according to the context.
+     * @param format Format of output.
+     * @return String representing date formatted according to the given format.
      */
-    public fun format(date: LocalDateTime, context: Context): String{
-        val prefs: PreferencesSet = PreferencesSet(context)
-        val timeFormat: TimeFormat = prefs.timeFormat
-        val dateFormat: DateFormat = prefs.dateFormat
-        val reti: StringBuilder = StringBuilder()
-        reti.append(dateFormat.format(date.toLocalDate()))
-        reti.append(' ')
-        reti.append(timeFormat.format(date.toLocalTime()))
-        return reti.toString()
+    public fun formatDate(date: LocalDate, format: DateFormat): String{
+        return format.format(date)
+    }
+
+    /**
+     * Formats date according to the format.
+     * @param date Date which will be formatted.
+     * @param format Format of output.
+     * @return String representing date formatted according to the given format.
+     */
+    public fun formatDate(date: LocalDateTime, format: DateFormat): String{
+        return this.formatDate(date.toLocalDate(), format)
+    }
+
+    /**
+     * Formats date according to the format.
+     * @param date Date which will be formatted.
+     * @param prefs Preferences which includes format of date which will be used.
+     * @return String representing date formatted according to the given format.
+     */
+    public fun formatDate(date: LocalDateTime, prefs: PreferencesSet): String{
+        return this.formatDate(date, prefs.dateFormat)
+    }
+
+    /**
+     * Formats time according to the format.
+     * @param time Time which will be formatted.
+     * @param format Format of output.
+     * @return String representing time formatted according to the given format.
+     */
+    public fun formatTime(time: LocalTime, format: TimeFormat): String{
+        return format.format(time)
+    }
+
+    /**
+     * Formats time according to the format.
+     * @param time Time which will be formatted.
+     * @param format Format of output.
+     * @return String representing time formatted according to the given format.
+     */
+    public fun formatTime(time: LocalDateTime, format: TimeFormat): String{
+        return this.formatTime(time.toLocalTime(), format)
+    }
+
+    /**
+     * Formats time according to the format.
+     * @param time Time which will be formatted.
+     * @param prefs Preferences which includes format of time which will be used.
+     * @return String representing time formatted according to the given format.
+     */
+    public fun formatTime(time: LocalDateTime, prefs: PreferencesSet): String{
+        return this.formatTime(time, prefs.timeFormat)
+    }
+
+    /**
+     * Formats date and time according to the format.
+     * @param data Date and time which will be formatted.
+     * @param date Date format which will be used to format date.
+     * @param time Time format which will be used to format time.
+     * @return String representing date and time formatted according to the given format.
+     */
+    public fun format(data: LocalDateTime, date: DateFormat, time: TimeFormat): String{
+        return "${this.formatDate(data, date)} ${this.formatTime(data, time)}"
+    }
+
+    /**
+     * Formats date and time according to the format.
+     * @param data Date and time which will be formatted.
+     * @param prefs Preferences which includes date and time format which will be used.
+     * @return String representing date and time formatted according to the given preferences.
+     */
+    public fun format(data: LocalDateTime, prefs: PreferencesSet): String{
+        return this.format(data, prefs.dateFormat, prefs.timeFormat)
     }
 }

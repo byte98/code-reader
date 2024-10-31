@@ -1,6 +1,7 @@
 package cz.skodaj.codereader.configuration
 
 import cz.skodaj.codereader.model.preferences.DateFormat
+import cz.skodaj.codereader.model.preferences.Theme
 import cz.skodaj.codereader.model.preferences.TimeFormat
 
 /**
@@ -17,4 +18,9 @@ object Preferences {
      * Default format of times.
      */
     val timeFormat: TimeFormat = TimeFormat.LONG_24
+
+    /**
+     * Default theme of the application.
+     */
+    val theme: Theme = Theme.SYSTEM
 }

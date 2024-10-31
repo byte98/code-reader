@@ -61,6 +61,9 @@ class DataSize {
         this.initDecimal()
         this.initBinary()
         this.combSize = "${this.decSize} (${this.binSize})"
+        if (this.decSize == this.binSize){
+            this.combSize = this.decSize
+        }
     }
 
     /**

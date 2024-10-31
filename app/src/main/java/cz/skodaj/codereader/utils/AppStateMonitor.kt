@@ -79,6 +79,7 @@ object AppStateMonitor: Receiver {
      * Runs all callable blocks which should be run after application is started.
      */
     private fun runStarters(){
+        Log.d("APPSTATEMONITOR", "Application started...")
         for(starter in this.starters){
             starter()
         }
@@ -93,6 +94,7 @@ object AppStateMonitor: Receiver {
             finisher()
         }
         this.finishers.clear()
+        Log.d("APPSTATEMONITOR", "Application finished.")
     }
 
     public override fun receive(message: Any) {

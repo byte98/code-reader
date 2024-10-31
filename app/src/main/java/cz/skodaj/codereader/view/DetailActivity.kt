@@ -12,6 +12,7 @@ import cz.skodaj.codereader.model.CodeInfo
 import cz.skodaj.codereader.model.messaging.Messenger
 import cz.skodaj.codereader.model.messaging.Receiver
 import cz.skodaj.codereader.model.messaging.messages.*
+import cz.skodaj.codereader.model.preferences.PreferencesSet
 import cz.skodaj.codereader.utils.DateUtils
 
 class DetailActivity : AppCompatActivity(), Receiver {
@@ -71,7 +72,7 @@ class DetailActivity : AppCompatActivity(), Receiver {
      * @param info Object with information about code.
      */
     private fun initCodeInfo(info: CodeInfo){
-        this.viewBinding.detailTextViewDate.text = DateUtils.format(info.getCreationDate(), this)
+        this.viewBinding.detailTextViewDate.text = DateUtils.format(info.getCreationDate(), PreferencesSet.of(this))
         this.viewBinding.detailTextViewType.text = this.getString(this.resources.getIdentifier("ct_${info.getCodeType().toString()}", "string", this.packageName))
         this.viewBinding.detailTextViewDataType.text = this.getString(this.resources.getIdentifier("dt_${info.getDataType().toString()}", "string", this.packageName))
         this.viewBinding.detailTextViewDataSize.text = info.getSizeString()
