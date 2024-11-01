@@ -54,6 +54,7 @@ import cz.skodaj.codereader.model.messaging.Receiver
 import cz.skodaj.codereader.model.messaging.messages.*
 import cz.skodaj.codereader.utils.AppStateMonitor
 import cz.skodaj.codereader.utils.DateUtils
+import cz.skodaj.codereader.utils.Initializer
 import cz.skodaj.codereader.viewmodel.MainViewModel
 import cz.skodaj.codereader.viewmodel.ViewModelFactory
 import kotlinx.coroutines.Job
@@ -348,6 +349,10 @@ class MainActivity : MessagingActivity() {
     //<editor-fold defaultstate="collapsed" desc="DEFAULT ACTIVITY FUNCTIONS">
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        // Initialize application
+        // (there it is assumed, that here de facto starts program)
+        Initializer.run()
 
         // Perform view binding
         super.onCreate(savedInstanceState)

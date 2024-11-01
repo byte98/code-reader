@@ -71,8 +71,10 @@ class DetailActivity : MessagingActivity(), Receiver {
      */
     private fun initCodeInfo(info: CodeInfo){
         this.viewBinding.detailTextViewDate.text = DateUtils.format(info.getCreationDate(), PreferencesSet.of(this))
-        this.viewBinding.detailTextViewType.text = this.getString(this.resources.getIdentifier("ct_${info.getCodeType().toString()}", "string", this.packageName))
-        this.viewBinding.detailTextViewDataType.text = this.getString(this.resources.getIdentifier("dt_${info.getDataType().toString()}", "string", this.packageName))
+        val codeType: String = "ct_${info.getCodeType().toString()}".uppercase()
+        val dataType: String = "dt_${info.getDataType().toString()}".uppercase()
+        this.viewBinding.detailTextViewType.text = this.getString(this.resources.getIdentifier(codeType, "string", this.packageName))
+        this.viewBinding.detailTextViewDataType.text = this.getString(this.resources.getIdentifier(dataType, "string", this.packageName))
         this.viewBinding.detailTextViewDataSize.text = info.getSizeString()
     }
 }

@@ -15,4 +15,36 @@
     <string name="unknown">Unknown</string>
     <string name="creation_date">Date of creation</string>
     <string name="data_type">Data type</string>
+
+    <!-- Code types translations -->
+    <string name="CT_UNKNOWN">Unknown</string>
+    <string name="CT_CODE_128">Barcode 128 (ISO/IEC 15417:2007)</string>
+    <string name="CT_CODE_39">Barcode 3 of 9 (ISO/IEC 16388:2007)</string>
+    <string name="CT_CODE_93">Barcode 93 (INTERMEC)</string>
+    <string name="CT_CODABAR">Code 2 of 7 (codabar)</string>
+    <string name="CT_DATA_MATRIX">Data matrix</string>
+    <string name="CT_EAN_13">EAN barcode (13 digit)</string>
+    <string name="CT_EAN_8">EAN barcode (8 digit)</string>
+    <string name="CT_ITF">Interleaved 2 of 5 (ITF)</string>
+    <string name="CT_QR_CODE">QR code</string>
+    <string name="CT_UPC_A">Universal product code (UPC-A)</string>
+    <string name="CT_UPC_E">Universal product code - short (UPC-E)</string>
+    <string name="CT_PDF417">Portable Data File barcode (PDF417)</string>
+    <string name="CT_AZTEC">Aztec matrix code</string>
+
+    <!-- Data type translations -->
+    <string name="DT_UNKNOWN">Unknown</string>
+    <string name="DT_CONTACT">Contact information</string>
+    <string name="DT_EMAIL">E-mail message</string>
+    <string name="DT_ISBN">International Standard Book Number (ISBN)</string>
+    <string name="DT_PHONE">Phone number</string>
+    <string name="DT_PRODUCT">Product code</string>
+    <string name="DT_SMS">SMS detail</string>
+    <string name="DT_TXT">Plain text</string>
+    <string name="DT_URL">URL or bookmark</string>
+    <string name="DT_WIFI">Wifi access point details</string>
+    <string name="DT_GEO">Geographic coordinates</string>
+    <string name="DT_CALENDAR">Calendar events</string>
+    <string name="DT_DRIVER">Driver\'s license data</string>
+
 </resources>

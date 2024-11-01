@@ -11,7 +11,11 @@ import cz.skodaj.codereader.model.messaging.messages.ActivityStartedMessage
  */
 object AppStateMonitor: Receiver {
 
-    init {
+
+    /**
+     * Initializes basic application state monitor.
+     */
+    public fun init () {
         Messenger.default.register(ActivityStartedMessage::class, this)
         Messenger.default.register(ActivityFinishedMessage::class, this)
     }
@@ -40,12 +44,12 @@ object AppStateMonitor: Receiver {
      * Increments counter of running activities.
      */
     private fun incrementRunningActivities(){
-        if (this.runningActivities == 0 as Long && this.activityStarted == false){
+        if (this.runningActivities == (0.toLong()) && this.activityStarted == false){
             this.activityStarted = true
             this.runStarters()
         }
         this.runningActivities++
-        Log.d("APPSTATEMONITOR", "Detected start of activity (actual running activities: ${this.runningActivities.toString()}")
+        Log.d("APPSTATEMONITOR", "Detected start of activity (actual running activities: ${this.runningActivities.toString()})")
     }
 
     /**
@@ -56,7 +60,7 @@ object AppStateMonitor: Receiver {
         if (this.runningActivities < 1 && this.activityStarted == true){
             this.runFinishers()
         }
-        Log.d("APPSTATEMONITOR", "Detected finished activity (actual running activities: ${this.runningActivities.toString()}")
+        Log.d("APPSTATEMONITOR", "Detected finished activity (actual running activities: ${this.runningActivities.toString()})")
     }
 
     /**

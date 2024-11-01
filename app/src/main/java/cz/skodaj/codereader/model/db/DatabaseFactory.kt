@@ -13,12 +13,6 @@ import kotlin.reflect.KClass
  */
 class DatabaseFactory {
 
-    init {
-        AppStateMonitor.addFinisher {
-            DatabaseFactory.closeAll()
-        }
-    }
-
     /**
      * List of all created connections.
      */
