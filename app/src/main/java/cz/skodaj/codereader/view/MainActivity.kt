@@ -65,7 +65,7 @@ import java.time.LocalTime
 import kotlin.math.min
 
 @ExperimentalGetImage
-class MainActivity : AppCompatActivity() {
+class MainActivity : MessagingActivity() {
 
     /**
      * Binding to view.
@@ -348,13 +348,6 @@ class MainActivity : AppCompatActivity() {
     //<editor-fold defaultstate="collapsed" desc="DEFAULT ACTIVITY FUNCTIONS">
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        // Disconnect from the database when application is finished
-        AppStateMonitor.addFinisher {
-            DatabaseFactory.closeAll()
-        }
-
-        // Inform about start of the activity
-        Messenger.default.send(ActivityStartedMessage(this))
 
         // Perform view binding
         super.onCreate(savedInstanceState)
@@ -398,14 +391,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
-        super.onDestroy()
         this.cameraExecutor.shutdown()
+        super.onDestroy()
     }
 
-    override fun finish(){
-        super.finish()
-        Messenger.default.send(ActivityFinishedMessage(this))
-    }
 
     //</editor-fold>
 

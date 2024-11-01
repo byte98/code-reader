@@ -1,6 +1,7 @@
 package cz.skodaj.codereader.configuration
 
 import cz.skodaj.codereader.model.preferences.DateFormat
+import cz.skodaj.codereader.model.preferences.Localization
 import cz.skodaj.codereader.model.preferences.Theme
 import cz.skodaj.codereader.model.preferences.TimeFormat
 
@@ -23,4 +24,9 @@ object Preferences {
      * Default theme of the application.
      */
     val theme: Theme = Theme.SYSTEM
+
+    /**
+     * Default localization of the application.
+     */
+    val localization: Localization = Localization.ENGLISH
 }

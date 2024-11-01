@@ -15,7 +15,7 @@ import cz.skodaj.codereader.model.messaging.messages.*
 import cz.skodaj.codereader.model.preferences.PreferencesSet
 import cz.skodaj.codereader.utils.DateUtils
 
-class DetailActivity : AppCompatActivity(), Receiver {
+class DetailActivity : MessagingActivity(), Receiver {
 
     init{
         Messenger.default.register(CodeInfoMessage::class, this)
@@ -27,8 +27,6 @@ class DetailActivity : AppCompatActivity(), Receiver {
     private lateinit var viewBinding: ActivityDetailBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
-        Messenger.default.send(ActivityStartedMessage(this))
 
         // Perform view binding
         super.onCreate(savedInstanceState)

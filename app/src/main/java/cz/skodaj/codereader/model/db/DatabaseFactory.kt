@@ -5,12 +5,19 @@ import android.database.sqlite.SQLiteOpenHelper
 import cz.skodaj.codereader.model.services.CodeService
 import cz.skodaj.codereader.model.services.FolderService
 import cz.skodaj.codereader.model.services.PreferenceService
+import cz.skodaj.codereader.utils.AppStateMonitor
 import kotlin.reflect.KClass
 
 /**
  * Class which creates different connections to the database.
  */
 class DatabaseFactory {
+
+    init {
+        AppStateMonitor.addFinisher {
+            DatabaseFactory.closeAll()
+        }
+    }
 
     /**
      * List of all created connections.

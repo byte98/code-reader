@@ -1,11 +1,25 @@
 package cz.skodaj.codereader.model.preferences
 
+import android.content.Context
 import androidx.appcompat.app.AppCompatDelegate
 
 /**
  * Class which holds theme switching of the application.
  */
 class ThemeSwitch {
+
+    /**
+     * Reference to the actual context of the application.
+     */
+    private val context: Context
+
+    /**
+     * Creates new switch of the theme of the application.
+     * @param context Reference to the context which performs actual switch.
+     */
+    constructor(context: Context){
+        this.context = context
+    }
 
     /**
      * Switches theme of the application.
@@ -27,5 +41,8 @@ class ThemeSwitch {
      */
     private fun switch(value: Int){
         AppCompatDelegate.setDefaultNightMode(value)
+        if (this.context is android.app.Activity){
+            this.context.recreate()
+        }
     }
 }

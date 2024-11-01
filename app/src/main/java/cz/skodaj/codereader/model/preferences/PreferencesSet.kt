@@ -29,6 +29,11 @@ class PreferencesSet {
      */
     private val _THEME: String = "THEME"
 
+    /**
+     * Name of preference which holds actual localization of the application.
+     */
+    private val _LOCALIZATION: String = "LOCALIZATION"
+
 // </editor-fold>
 
     /**
@@ -37,18 +42,25 @@ class PreferencesSet {
     private val db: PreferenceService
 
     /**
-     * Handler which can perform theme switching
+     * Handler which can perform theme switching.
      */
     private val themeSwitch: ThemeSwitch
+
+    /**
+     * Handler which can perform localization switching.
+     */
+    private val localizationSwitch: LocalizationSwitch
 
     /**
      * Creates new set which works with all known preferences of the application.
      * @param db Service which handles communication with the database.
      * @param themeSwitch Handler which can perform theme switching.
+     * @param localizationSwitch Handler which can perform localization switching.
      */
-    private constructor(db: PreferenceService, themeSwitch: ThemeSwitch){
+    private constructor(db: PreferenceService, themeSwitch: ThemeSwitch, localizationSwitch: LocalizationSwitch){
         this.db = db
         this.themeSwitch = themeSwitch
+        this.localizationSwitch = localizationSwitch
     }
 
     /**
@@ -56,25 +68,10 @@ class PreferencesSet {
      */
     public var timeFormat: TimeFormat
     get() {
-        var reti: TimeFormat = Preferences.timeFormat
-        val pref: Preference? = this.db.read(this._TIMEFORMAT)
-        if (pref == null){
-            this.db.create(this._TIMEFORMAT, Preferences.timeFormat.toString())
-        }
-        else{
-            reti = TimeFormat.fromString(pref.getValue())
-        }
-        return reti
+        return TimeFormat.fromString(this.getPreference(this._TIMEFORMAT, Preferences.timeFormat.toString()))
     }
     set(value) {
-        val pref: Preference? = this.db.read(this._TIMEFORMAT)
-        if (pref == null){
-            this.db.create(this._TIMEFORMAT, value.toString())
-        }
-        else{
-            pref.setPreference(value.toString())
-            this.db.update(pref)
-        }
+        this.setPreference(this._TIMEFORMAT, value.toString())
     }
 
     /**
@@ -82,25 +79,10 @@ class PreferencesSet {
      */
     public var dateFormat: DateFormat
         get() {
-            var reti: DateFormat = Preferences.dateFormat
-            val pref: Preference? = this.db.read(this._DATEFORMAT)
-            if (pref == null){
-                this.db.create(this._DATEFORMAT, Preferences.dateFormat.toString())
-            }
-            else{
-                reti = DateFormat.fromString(pref.getValue())
-            }
-            return reti
+            return DateFormat.fromString(this.getPreference(this._DATEFORMAT, Preferences.dateFormat.toString()))
         }
         set(value) {
-            val pref: Preference? = this.db.read(this._DATEFORMAT)
-            if (pref == null){
-                this.db.create(this._DATEFORMAT, value.toString())
-            }
-            else{
-                pref.setPreference(value.toString())
-                this.db.update(pref)
-            }
+            this.setPreference(this._DATEFORMAT, value.toString())
         }
 
     /**
@@ -108,27 +90,58 @@ class PreferencesSet {
      */
     public var theme: Theme
         get(){
-            var reti: Theme = Preferences.theme
-            val pref: Preference? = this.db.read(this._THEME)
-            if (pref == null){
-                this.db.create(this._THEME, Preferences.theme.toString())
-            }
-            else{
-                reti = Theme.fromString(pref.getValue())
-            }
-            return reti
+            return Theme.fromString(this.getPreference(this._THEME, Preferences.theme.toString()))
         }
         set(value) {
-            val pref: Preference? = this.db.read(this._THEME)
-            if (pref == null){
-                this.db.create(this._THEME, value.toString())
-            }
-            else{
-                pref.setPreference(value.toString())
-                this.db.update(pref)
-            }
+            this.setPreference(this._THEME, value.toString())
             this.themeSwitch.switch(value)
         }
+
+    /**
+     * Actual localization of the application.
+     */
+    public var localization: Localization
+        get() {
+            return Localization.fromString(this.getPreference(this._LOCALIZATION, Preferences.localization.toString()))
+        }
+        set(value){
+            this.setPreference(this._LOCALIZATION, value.toString())
+            this.localizationSwitch.switch(value)
+        }
+
+    /**
+     * Gets preference from the database.
+     * @param name Name of the preference.
+     * @param default Default value of the preference.
+     * @return String representing raw value of the preference.
+     */
+    private fun getPreference(name: String, default: String): String{
+        var reti: String = default
+        val pref: Preference? = this.db.read(name)
+        if (pref == null){
+            this.db.create(name, reti)
+        }
+        else{
+            reti = pref.getValue()
+        }
+        return reti
+    }
+
+    /**
+     * Sets value of preference in the database.
+     * @param name Name of preference.
+     * @param value New value of preference.
+     */
+    private fun setPreference(name: String, value: String){
+        val pref: Preference? = this.db.read(name)
+        if (pref == null){
+            this.db.create(name, value)
+        }
+        else{
+            pref.setPreference(value)
+            this.db.update(pref)
+        }
+    }
 
     companion object{
 
@@ -139,8 +152,9 @@ class PreferencesSet {
          */
         public fun of(context: Context): PreferencesSet{
             val service: PreferenceService = DatabaseFactory(context, this::class).preferences()
-            val themeSwitch: ThemeSwitch = ThemeSwitch()
-            return PreferencesSet(service, themeSwitch)
+            val themeSwitch: ThemeSwitch = ThemeSwitch(context)
+            val localizationSwitch = LocalizationSwitch(context)
+            return PreferencesSet(service, themeSwitch, localizationSwitch)
         }
     }
 }
