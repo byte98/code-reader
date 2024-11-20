@@ -39,7 +39,6 @@ class ZoomHelper: CameraHelper {
      * @param camera Reference to the camera of the device.
      */
     constructor(camera: Camera): super(){
-        Messenger.default.register(CameraEnabledMessage::class, this)
         this.camera = camera
         this.zoom = MutableLiveData<Float>()
         this.zoom.setValue(this.camera.cameraInfo.zoomState?.value?.zoomRatio ?: 1f)

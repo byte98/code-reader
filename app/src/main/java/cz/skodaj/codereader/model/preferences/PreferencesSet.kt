@@ -64,6 +64,14 @@ class PreferencesSet {
     }
 
     /**
+     * Initializes application according to the preferences.
+     */
+    public fun initApp(){
+        this.themeSwitch.switch(this.theme)
+        this.localizationSwitch.switch(this.localization)
+    }
+
+    /**
      * Actual format used to display time data.
      */
     public var timeFormat: TimeFormat

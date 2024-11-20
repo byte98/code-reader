@@ -1,4 +1,4 @@
-package cz.skodaj.codereader.view
+package cz.skodaj.codereader.view.components
 
 import android.content.Context
 import android.graphics.Canvas
@@ -6,7 +6,6 @@ import android.graphics.Paint
 import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.View
-import androidx.constraintlayout.solver.widgets.Rectangle
 import androidx.core.content.ContextCompat
 import cz.skodaj.codereader.R
 

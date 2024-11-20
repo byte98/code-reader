@@ -18,7 +18,7 @@
 
     </androidx.camera.view.PreviewView>
 
-    <cz.skodaj.codereader.view.RectangleView
+    <cz.skodaj.codereader.view.components.RectangleView
         android:id="@+id/mainRectangleView"
         android:layout_width="match_parent"
         android:layout_height="0dp"

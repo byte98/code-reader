@@ -49,8 +49,7 @@ object AppStateMonitor: Receiver {
             this.runStarters()
         }
         this.runningActivities++
-        Log.d("APPSTATEMONITOR", "Detected start of activity (actual running activities: ${this.runningActivities.toString()})")
-    }
+   }
 
     /**
      * Decrements counter of running activities.
@@ -60,7 +59,6 @@ object AppStateMonitor: Receiver {
         if (this.runningActivities < 1 && this.activityStarted == true){
             this.runFinishers()
         }
-        Log.d("APPSTATEMONITOR", "Detected finished activity (actual running activities: ${this.runningActivities.toString()})")
     }
 
     /**
@@ -103,9 +101,13 @@ object AppStateMonitor: Receiver {
 
     public override fun receive(message: Any) {
         if (message::class == ActivityStartedMessage::class){
+            val msg: ActivityStartedMessage = message as ActivityStartedMessage
+            Log.d("APPSTATEMONITOR", "Detected start of activity [${msg.activity::class.qualifiedName}]")
             this.incrementRunningActivities()
         }
         else if (message::class == ActivityFinishedMessage::class){
+            val msg: ActivityFinishedMessage = message as ActivityFinishedMessage
+            Log.d("APPSTATEMONITOR", "Detected end of activity [${msg.activity::class.qualifiedName}]")
             this.decrementRunningActivities()
         }
     }

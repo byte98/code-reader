@@ -44,9 +44,8 @@ class DetailActivity : MessagingActivity(), Receiver {
     }
 
     override fun finish() {
-        super.finish()
         Messenger.default.send(DetailActivityFinishedMessage())
-        Messenger.default.send(ActivityFinishedMessage(this))
+        super.finish()
     }
 
     /**

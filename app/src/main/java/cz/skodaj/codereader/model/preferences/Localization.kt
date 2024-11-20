@@ -54,7 +54,7 @@ enum class Localization {
     }
 
     public override fun toString(): String {
-        var reti: String = Preferences.localization.toString()
+        var reti: String = ""
         when(this){
             ENGLISH -> reti = "ENGLISH"
             CZECH -> reti = "CZECH"

@@ -23,7 +23,7 @@ enum class Theme {
     SYSTEM;
 
     public override fun toString(): String {
-        var reti: String = Preferences.theme.toString()
+        var reti: String = ""
         when(this){
             LIGHT -> reti = "LIGHT"
             DARK -> reti = "DARK"

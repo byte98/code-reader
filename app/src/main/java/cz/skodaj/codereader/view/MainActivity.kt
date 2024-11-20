@@ -52,6 +52,7 @@ import cz.skodaj.codereader.model.db.DatabaseFactory
 import cz.skodaj.codereader.model.messaging.Messenger
 import cz.skodaj.codereader.model.messaging.Receiver
 import cz.skodaj.codereader.model.messaging.messages.*
+import cz.skodaj.codereader.model.preferences.PreferencesSet
 import cz.skodaj.codereader.utils.AppStateMonitor
 import cz.skodaj.codereader.utils.DateUtils
 import cz.skodaj.codereader.utils.Initializer
@@ -79,11 +80,6 @@ class MainActivity : MessagingActivity() {
     private val viewModel: MainViewModel by lazy {
         ViewModelProvider(this, ViewModelFactory()).get(MainViewModel::class.java)
     }
-
-    /**
-     * Executor of camera thread
-     */
-    private lateinit var cameraExecutor: ExecutorService
 
 
     /**
@@ -245,7 +241,7 @@ class MainActivity : MessagingActivity() {
                 val rectF = code.position.toRectangle(previewSize)
                 this.viewBinding.mainRectangleView.setRectangle(rectF)
                 val intent: Intent = Intent(this, DetailActivity::class.java).apply {
-                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
                 }
                 Messenger.default.send(CameraEnabledMessage(enabled = false))
                 Messenger.default.sendDelayed(DetailActivity::class, CodeInfoMessage(
@@ -256,7 +252,8 @@ class MainActivity : MessagingActivity() {
                         override fun receive(message: Any) {
                             Messenger.default.send(CameraEnabledMessage(enabled = true))
                         }
-                    })
+                    }
+                )
                 this.startActivity(intent)
             }
         })
@@ -350,9 +347,20 @@ class MainActivity : MessagingActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
-        // Initialize application
-        // (there it is assumed, that here de facto starts program)
-        Initializer.run()
+        if (this.isTaskRoot == false){
+            val intent: Intent = this.intent
+            if (intent.hasCategory(Intent.CATEGORY_LAUNCHER) && intent.action == Intent.ACTION_MAIN){
+                this.finish()
+                return
+            }
+        }
+
+        if (savedInstanceState == null) {
+            // Initialize application
+            // (there it is assumed, that here de facto starts program)
+            Initializer.run()
+            PreferencesSet.of(this).initApp()
+        }
 
         // Perform view binding
         super.onCreate(savedInstanceState)
@@ -394,13 +402,6 @@ class MainActivity : MessagingActivity() {
         this.viewBinding.mainRectangleView.setRectangle(this.defaultRectangle())
 
     }
-
-    override fun onDestroy() {
-        this.cameraExecutor.shutdown()
-        super.onDestroy()
-    }
-
-
     //</editor-fold>
 
 
