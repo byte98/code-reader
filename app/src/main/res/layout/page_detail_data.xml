@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        style="@style/DetailTitleTextStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/raw_value" />
+
+    <EditText
+        android:id="@+id/detailTextViewRawData"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="top|start"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:textIsSelectable="true"
+        android:inputType="textMultiLine"/>
+
+</LinearLayout>

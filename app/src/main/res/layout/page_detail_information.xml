@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        style="@style/DetailTitleTextStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/type" />
+
+    <TextView
+        android:id="@+id/detailTextViewType"
+        style="@style/DetailValueTextStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/unknown" />
+
+    <TextView
+        style="@style/DetailTitleTextStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/creation_date" />
+
+    <TextView
+        android:id="@+id/detailTextViewDate"
+        style="@style/DetailValueTextStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/unknown" />
+
+    <TextView
+        style="@style/DetailTitleTextStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/data_type" />
+
+    <TextView
+        android:id="@+id/detailTextViewDataType"
+        style="@style/DetailValueTextStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/unknown" />
+
+    <TextView
+        style="@style/DetailTitleTextStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/data_size" />
+
+    <TextView
+        android:id="@+id/detailTextViewDataSize"
+        style="@style/DetailValueTextStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/unknown" />
+
+</LinearLayout>

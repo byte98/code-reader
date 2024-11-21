@@ -15,6 +15,7 @@
     <string name="unknown">Unknown</string>
     <string name="creation_date">Date of creation</string>
     <string name="data_type">Data type</string>
+    <string name="raw_value">Raw value</string>
 
     <!-- Code types translations -->
     <string name="CT_UNKNOWN">Unknown</string>
@@ -46,5 +47,7 @@
     <string name="DT_GEO">Geographic coordinates</string>
     <string name="DT_CALENDAR">Calendar events</string>
     <string name="DT_DRIVER">Driver\'s license data</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

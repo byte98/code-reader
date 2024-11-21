@@ -31,12 +31,18 @@ class Code: CodeInfo{
     private var description: String
 
     /**
+     * Date and time of last modification of the code.
+     */
+    private var modified: LocalDateTime
+
+    /**
      * Creates new code.
      * @param id Identifier of code in database.
      * @param folder Folder to which code belongs to.
      * @param name Name of code.
      * @param description Description of code.
      * @param creationDate Date and time of creation.
+     * @param modificationDate Date and time of last modification.
      * @param codeType Type of code.
      * @param image Image containing code.
      * @param position Position of the code in the image.
@@ -51,6 +57,7 @@ class Code: CodeInfo{
         name: String,
         description: String,
         creationDate: LocalDateTime,
+        modificationDate: LocalDateTime,
         codeType: CodeType,
         image: Bitmap,
         position: Rect,
@@ -63,6 +70,7 @@ class Code: CodeInfo{
         this.folder = folder
         this.name = name
         this.description = description
+        this.modified = modificationDate
     }
 
     /**
@@ -111,5 +119,21 @@ class Code: CodeInfo{
      */
     public fun getDescription(): String{
         return this.description
+    }
+
+    /**
+     * Sets date and time of last modification.
+     * @param date New date and time of last modification.
+     */
+    public fun setModificationDate(date: LocalDateTime){
+        this.modified = date
+    }
+
+    /**
+     * Gets date and time of last modification.
+     * @return Date and time of last modification.
+     */
+    public fun getModificationDate(): LocalDateTime{
+        return this.modified
     }
 }

@@ -80,6 +80,7 @@ class CodeService(
      * @param name Name of code.
      * @param description Description of code.
      * @param creationDate Date and time of creation.
+     * @param modificationDate Date and time of last modification.
      * @param codeType Type of code.
      * @param image Image containing code.
      * @param position Position of the code in the image.
@@ -95,6 +96,7 @@ class CodeService(
         name: String,
         description: String,
         creationDate: LocalDateTime,
+        modificationDate: LocalDateTime,
         codeType: CodeType,
         image: Bitmap,
         position: Rect,
@@ -111,6 +113,7 @@ class CodeService(
                 put(CodeContract.CodeEntry.COLUMN_NAME, name)
                 put(CodeContract.CodeEntry.COLUMN_DESCRIPTION, description)
                 put(CodeContract.CodeEntry.COLUMN_CREATED, DateUtils.datetimeToDouble(creationDate))
+                put(CodeContract.CodeEntry.COLUMN_MODIFIED, DateUtils.datetimeToDouble(modificationDate))
                 put(CodeContract.CodeEntry.COLUMN_CODETYPE, codeType.toString())
                 put(CodeContract.CodeEntry.COLUMN_IMAGE, ImageUtils.toBase64(image))
                 put(CodeContract.CodeEntry.COLUMN_POSITION, CodeService.positionToString(position))
@@ -127,6 +130,7 @@ class CodeService(
                     name,
                     description,
                     creationDate,
+                    modificationDate,
                     codeType,
                     image,
                     position,
@@ -163,6 +167,7 @@ class CodeService(
             folder,
             name,
             description,
+            info.getCreationDate(),
             info.getCreationDate(),
             info.getCodeType(),
             info.getImage(),
@@ -259,6 +264,7 @@ class CodeService(
         var rawname: String? = null
         var rawdescription: String? = null
         var rawcreationDate: Double? = null
+        var rawmodificationDate: Double? = null
         var rawcodeType: String? = null
         var rawimage: String? = null
         var rawposition: String? = null
@@ -273,6 +279,7 @@ class CodeService(
         var name: String? = null
         var description: String? = null
         var creationDate: LocalDateTime? = null
+        var modificationDate: LocalDateTime? = null
         var codeType: CodeType? = null
         var image: Bitmap? = null
         var position: Rect? = null
@@ -287,6 +294,7 @@ class CodeService(
         rawname = cursor.getStringOrNull(cursor.getColumnIndexOrThrow(CodeContract.CodeEntry.COLUMN_NAME))
         rawdescription = cursor.getStringOrNull(cursor.getColumnIndexOrThrow(CodeContract.CodeEntry.COLUMN_DESCRIPTION))
         rawcreationDate = cursor.getDoubleOrNull(cursor.getColumnIndexOrThrow(CodeContract.CodeEntry.COLUMN_CREATED))
+        rawmodificationDate = cursor.getDoubleOrNull(cursor.getColumnIndexOrThrow(CodeContract.CodeEntry.COLUMN_MODIFIED))
         rawcodeType = cursor.getStringOrNull(cursor.getColumnIndexOrThrow(CodeContract.CodeEntry.COLUMN_CODETYPE))
         rawimage = cursor.getStringOrNull(cursor.getColumnIndexOrThrow(CodeContract.CodeEntry.COLUMN_IMAGE))
         rawposition = cursor.getStringOrNull(cursor.getColumnIndexOrThrow(CodeContract.CodeEntry.COLUMN_POSITION))
@@ -301,6 +309,7 @@ class CodeService(
         if (rawname != null) name = rawname
         if (rawdescription != null) description = rawdescription
         if (rawcreationDate != null) creationDate = DateUtils.datetimeFromDouble(rawcreationDate)
+        if (rawmodificationDate != null) modificationDate = DateUtils.datetimeFromDouble(rawmodificationDate)
         if (rawcodeType != null) codeType = CodeType.fromString(rawcodeType)
         if (rawimage != null) image = ImageUtils.toImage(rawimage)
         if (rawposition != null) position = CodeService.stringToPosision(rawposition)
@@ -317,6 +326,7 @@ class CodeService(
             name != null &&
             description != null &&
             creationDate != null &&
+            modificationDate != null &&
             codeType != null &&
             image != null &&
             position != null &&
@@ -325,7 +335,7 @@ class CodeService(
             dataFields != null &&
             size != null
         ){
-            reti = Code(id, folder, name, description, creationDate, codeType, image, position, dataType, data, size, dataFields)
+            reti = Code(id, folder, name, description, creationDate, modificationDate, codeType, image, position, dataType, data, size, dataFields)
         }
         return reti
     }
@@ -346,6 +356,7 @@ class CodeService(
                 put(CodeContract.CodeEntry.COLUMN_NAME, code.getName())
                 put(CodeContract.CodeEntry.COLUMN_DESCRIPTION, code.getDescription())
                 put(CodeContract.CodeEntry.COLUMN_CREATED, DateUtils.datetimeToDouble(code.getCreationDate()))
+                put(CodeContract.CodeEntry.COLUMN_MODIFIED, DateUtils.datetimeToDouble(code.getModificationDate()))
                 put(CodeContract.CodeEntry.COLUMN_CODETYPE, code.getCodeType().toString())
                 put(CodeContract.CodeEntry.COLUMN_IMAGE, ImageUtils.toBase64(code.getImage()))
                 put(CodeContract.CodeEntry.COLUMN_POSITION, CodeService.positionToString(code.getPosition()))

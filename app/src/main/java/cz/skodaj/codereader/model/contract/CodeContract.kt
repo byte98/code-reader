@@ -43,6 +43,11 @@ object CodeContract {
         public final const val COLUMN_CREATED: String = "CREATED"
 
         /**
+         * Name of column with date and time of last modification of code.
+         */
+        public final const val COLUMN_MODIFIED: String = "MODIFIED"
+
+        /**
          * Name of column with type of code.
          */
         public final const val COLUMN_CODETYPE: String = "CTYPE"
@@ -86,6 +91,7 @@ object CodeContract {
             CodeContract.CodeEntry.COLUMN_NAME,
             CodeContract.CodeEntry.COLUMN_DESCRIPTION,
             CodeContract.CodeEntry.COLUMN_CREATED,
+            CodeContract.CodeEntry.COLUMN_MODIFIED,
             CodeContract.CodeEntry.COLUMN_CODETYPE,
             CodeContract.CodeEntry.COLUMN_IMAGE,
             CodeContract.CodeEntry.COLUMN_POSITION,
@@ -106,6 +112,7 @@ object CodeContract {
                 "${CodeContract.CodeEntry.COLUMN_NAME} TEXT NOT NULL, " +
                 "${CodeContract.CodeEntry.COLUMN_DESCRIPTION} TEXT NOT NULL, " +
                 "${CodeContract.CodeEntry.COLUMN_CREATED} REAL NOT NULL, " +
+                "${CodeContract.CodeEntry.COLUMN_MODIFIED} REAL NOT NULL, " +
                 "${CodeContract.CodeEntry.COLUMN_CODETYPE} TEXT NOT NULL, " +
                 "${CodeContract.CodeEntry.COLUMN_IMAGE} TEXT NOT NULL, " +
                 "${CodeContract.CodeEntry.COLUMN_POSITION} TEXT NOT NULL, " +
