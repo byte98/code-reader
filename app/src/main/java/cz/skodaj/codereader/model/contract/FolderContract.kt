@@ -69,9 +69,9 @@ object FolderContract {
                     "${FolderContract.FolderEntry.COLUMN_NAME}, " +
                     "${FolderContract.FolderEntry.COLUMN_DESCRIPTION})" +
             "VALUES (" +
-                    "${Folder.Root.id}, " +
-                    "'${Folder.Root.name}'," +
-                    "'${Folder.Root.description}')"
+                    "${Folder.Root.getId()}, " +
+                    "'${Folder.Root.getName()}'," +
+                    "'${Folder.Root.getDescription()}')"
 
     /**
      * SQL query which deletes table of folders.

@@ -41,6 +41,14 @@ enum class DataType {
         return reti
     }
 
+    /**
+     * Gets string which can be translated.
+     * @return String which should be translatable according to the actual context.
+     */
+    public fun toTranslatableString(): String{
+        return "DT_${this.toString()}"
+    }
+
     companion object{
 
         /**

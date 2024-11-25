@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import com.google.android.material.tabs.TabLayoutMediator
 import cz.skodaj.codereader.R
 import cz.skodaj.codereader.databinding.ActivityDetailBinding
 import cz.skodaj.codereader.databinding.ActivityMainBinding
@@ -16,6 +17,8 @@ import cz.skodaj.codereader.model.messaging.Receiver
 import cz.skodaj.codereader.model.messaging.messages.*
 import cz.skodaj.codereader.model.preferences.PreferencesSet
 import cz.skodaj.codereader.utils.DateUtils
+import cz.skodaj.codereader.utils.StringUtils
+import cz.skodaj.codereader.view.components.DetailPagerAdapter
 
 class DetailActivity : MessagingActivity(), Receiver {
 
@@ -34,13 +37,6 @@ class DetailActivity : MessagingActivity(), Receiver {
         super.onCreate(savedInstanceState)
         this.viewBinding = ActivityDetailBinding.inflate(this.layoutInflater)
         this.setContentView(this.viewBinding.root)
-
-        // Make all tabs headers lowercase
-        for (i in 0 until this.viewBinding.detailTabLayout.tabCount){
-            val tab: View = (this.viewBinding.detailTabLayout.getChildAt(0) as ViewGroup).getChildAt(i)
-            val tabText: TextView? = tab.findViewById<TextView>(com.google.android.material.R.id.text)
-            tabText?.setText(tabText?.getText().toString().lowercase())
-        }
 
         // Check for the content of the view in the messenger
         val messenger: Messenger = Messenger.default
@@ -87,5 +83,17 @@ class DetailActivity : MessagingActivity(), Receiver {
         this.viewBinding.detailTextViewDataType.text = this.getString(this.resources.getIdentifier(dataType, "string", this.packageName))
         this.viewBinding.detailTextViewDataSize.text = info.getSizeString()*/
         // TODO: Implement this using ViewPage2
+
+        val adapter: DetailPagerAdapter = DetailPagerAdapter(this, info, this)
+        this.viewBinding.detailViewPager.setAdapter(adapter)
+
+        TabLayoutMediator(this.viewBinding.detailTabLayout, this.viewBinding.detailViewPager){tab, position ->
+            tab.setText(when(position){
+                0 -> this.getString(R.string.information).lowercase()
+                1 -> this.getString(R.string.data).lowercase()
+                2 -> this.getString(R.string.source).lowercase()
+                else -> ""
+            })
+        }.attach()
     }
 }

@@ -43,6 +43,14 @@ enum class CodeType {
         return reti
     }
 
+    /**
+     * Gets string which can be translated.
+     * @return String which should be translatable according to the actual context.
+     */
+    public fun toTranslatableString(): String{
+        return "CT_${this.toString()}"
+    }
+
     companion object{
 
         /**

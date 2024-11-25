@@ -31,7 +31,7 @@ class FolderService(
         if (dbase != null) {
             var parentId: Long? = null
             if (parent != null) {
-                parentId = parent.id
+                parentId = parent.getId()
             }
             val data: ContentValues = ContentValues().apply {
                 put(FolderContract.FolderEntry.COLUMN_NAME, name)
@@ -103,7 +103,7 @@ class FolderService(
         if (dbase != null){
             var parentId: Long? = null
             if (parent != null){
-                parentId = parent.id
+                parentId = parent.getId()
             }
             val projection: Array<String> = arrayOf(FolderContract.FolderEntry.COLUMN_ID)
             val ids: MutableList<Long> = mutableListOf<Long>()
@@ -142,16 +142,16 @@ class FolderService(
         var reti = 0
         val dbase: SQLiteDatabase? = this.db.writableDatabase
         var parentId: Long? = null
-        if (folder.parent != null){
-            parentId = folder.parent?.id
+        if (folder.getParent() != null){
+            parentId = folder.getParent()?.getId()
         }
         if (dbase != null){
             val data: ContentValues = ContentValues().apply {
-                put(FolderContract.FolderEntry.COLUMN_NAME, folder.name)
-                put(FolderContract.FolderEntry.COLUMN_DESCRIPTION, folder.description)
+                put(FolderContract.FolderEntry.COLUMN_NAME, folder.getName())
+                put(FolderContract.FolderEntry.COLUMN_DESCRIPTION, folder.getDescription())
                 put(FolderContract.FolderEntry.COLUMN_PARENT, parentId)
             }
-            reti = dbase.update(FolderContract.FolderEntry.TABLE_NAME, data, "${FolderContract.FolderEntry.COLUMN_ID} = ?", arrayOf(folder.id.toString()))
+            reti = dbase.update(FolderContract.FolderEntry.TABLE_NAME, data, "${FolderContract.FolderEntry.COLUMN_ID} = ?", arrayOf(folder.getId().toString()))
         }
         return reti
     }

@@ -16,6 +16,11 @@
     <string name="creation_date">Date of creation</string>
     <string name="data_type">Data type</string>
     <string name="raw_value">Raw value</string>
+    <string name="name">Name</string>
+    <string name="description">Description</string>
+    <string name="location">Location</string>
+    <string name="modification_date">Date of last modification</string>
+
 
     <!-- Code types translations -->
     <string name="CT_UNKNOWN">Unknown</string>

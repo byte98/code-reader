@@ -1,14 +1,114 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".DetailInfoFragment">
+    tools:context=".view.components.DetailInfoFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:orientation="vertical">
 
-</FrameLayout>
+        <!-- Name -->
+        <TextView
+            android:id="@+id/detailTextViewNameHeader"
+            style="@style/DetailTitleTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/name" />
+        <TextView
+            android:id="@+id/detailTextViewName"
+            style="@style/DetailValueTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/unknown" />
+
+        <!-- Description -->
+        <TextView
+            android:id="@+id/detailTextViewDescriptionHeader"
+            style="@style/DetailTitleTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/description" />
+        <TextView
+            android:id="@+id/detailTextViewDescription"
+            style="@style/DetailValueTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/unknown" />
+
+        <!-- Folder -->
+        <TextView
+            android:id="@+id/detailTextViewFolderHeader"
+            style="@style/DetailTitleTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/location" />
+        <TextView
+            android:id="@+id/detailTextViewFolder"
+            style="@style/DetailValueTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/unknown" />
+
+        <!-- Type -->
+        <TextView
+            android:id="@+id/detailTextViewTypeHeader"
+            style="@style/DetailTitleTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/type" />
+        <TextView
+            android:id="@+id/detailTextViewType"
+            style="@style/DetailValueTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/unknown" />
+
+        <!-- Data size -->
+        <TextView
+            android:id="@+id/detailTextViewDataSizeHeader"
+            style="@style/DetailTitleTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/data_size" />
+        <TextView
+            android:id="@+id/detailTextViewDataSize"
+            style="@style/DetailValueTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/unknown" />
+
+        <!-- Created -->
+        <TextView
+            android:id="@+id/detailTextViewCreatedHeader"
+            style="@style/DetailTitleTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/creation_date" />
+        <TextView
+            android:id="@+id/detailTextViewCreated"
+            style="@style/DetailValueTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/unknown" />
+
+        <!-- Modified -->
+        <TextView
+            android:id="@+id/detailTextViewModifiedHeader"
+            style="@style/DetailTitleTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/creation_date" />
+        <TextView
+            android:id="@+id/detailTextViewModified"
+            style="@style/DetailValueTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/unknown" />
+
+
+    </LinearLayout>
+
+</ScrollView>

@@ -109,7 +109,7 @@ class CodeService(
         val dbase: SQLiteDatabase? = this.db.writableDatabase
         if (dbase != null){
             val inData: ContentValues = ContentValues().apply {
-                put(CodeContract.CodeEntry.COLUMN_FOLDER, folder.id)
+                put(CodeContract.CodeEntry.COLUMN_FOLDER, folder.getId())
                 put(CodeContract.CodeEntry.COLUMN_NAME, name)
                 put(CodeContract.CodeEntry.COLUMN_DESCRIPTION, description)
                 put(CodeContract.CodeEntry.COLUMN_CREATED, DateUtils.datetimeToDouble(creationDate))
@@ -225,7 +225,7 @@ class CodeService(
         if (dbase != null){
             val projection: Array<String> = CodeContract.CodeEntry.ALL_COLUMNS
             val selection: String = "${CodeContract.CodeEntry.COLUMN_FOLDER} = ?"
-            val selectionArgs: Array<String> = arrayOf(folder.id.toString())
+            val selectionArgs: Array<String> = arrayOf(folder.getId().toString())
             val cursor: Cursor = dbase.query(
                 CodeContract.CodeEntry.TABLE_NAME,
                 projection,
@@ -352,7 +352,7 @@ class CodeService(
                 dataFields.put(key, code.getDataField(key) ?: "")
             }
             val data: ContentValues = ContentValues().apply {
-                put(CodeContract.CodeEntry.COLUMN_FOLDER, code.getFolder().id)
+                put(CodeContract.CodeEntry.COLUMN_FOLDER, code.getFolder().getId())
                 put(CodeContract.CodeEntry.COLUMN_NAME, code.getName())
                 put(CodeContract.CodeEntry.COLUMN_DESCRIPTION, code.getDescription())
                 put(CodeContract.CodeEntry.COLUMN_CREATED, DateUtils.datetimeToDouble(code.getCreationDate()))
