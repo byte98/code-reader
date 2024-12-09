@@ -1,11 +1,14 @@
 package cz.skodaj.codereader.model
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.Rect
 import android.media.Image
 import android.os.Parcel
 import android.os.Parcelable
+import android.util.Base64
+import android.util.Log
 import androidx.core.graphics.toRect
 import cz.skodaj.codereader.utils.DataSize
 import cz.skodaj.codereader.utils.ImageUtils
@@ -31,7 +34,7 @@ open class CodeInfo {
     /**
      * Image containing code.
      */
-    private val image: Bitmap
+    private val image: Bitmap?
 
     /**
      * Position of the code in the image.
@@ -59,6 +62,11 @@ open class CodeInfo {
     private val size: DataSize
 
     /**
+     * Raw data in binary form.
+     */
+    private val rawBytes: ByteArray
+
+    /**
      * Creates new holder of basic information about code.
      * @param creationDate Date and time of creation.
      * @param codeType Type of code.
@@ -66,16 +74,18 @@ open class CodeInfo {
      * @param position Position of the code in the image.
      * @param dataType Type of data stored in code.
      * @param data Data stored in code.
+     * @param bytes: Raw data in binary form.
      * @param size Size of data stored in code.
      * @param dataFields Fields of data stored in code (if available).
      */
     public constructor(
         creationDate: LocalDateTime,
         codeType: CodeType,
-        image: Bitmap,
+        image: Bitmap?,
         position: Rect,
         dataType: DataType,
         data: String,
+        bytes: ByteArray,
         size: Double,
         dataFields: Map<String, String> = emptyMap()
     ){
@@ -86,6 +96,7 @@ open class CodeInfo {
         this.dataType = dataType
         this.data = data
         this.dataFields = dataFields
+        this.rawBytes = bytes
         this.size = DataSize(size)
     }
 
@@ -107,9 +118,10 @@ open class CodeInfo {
 
     /**
      * Gets image in which is code located.
-     * @return Image containing code.
+     * @return Image containing code,
+     *         or NULL if no image is defined.
      */
-    public fun getImage(): Bitmap{
+    public fun getImage(): Bitmap?{
         return this.image
     }
 
@@ -184,69 +196,19 @@ open class CodeInfo {
         return this.size.getCombined()
     }
 
-    companion object{
-
-        /**
-         * Default width of unknown images (in pixels).
-         */
-        private val UnknownImageWidth: Int = 400
-
-        /**
-         * Default height of unknown images (in pixels).
-         */
-        private val UnknownImageHeight: Int = 400
-
-        /**
-         * Default color of unknown images background.
-         */
-        private val UnknownImageBackground: Color = Color.valueOf(Color.BLACK)
-
-        /**
-         * Default color of unknown images foreground.
-         */
-        private val UnknownImageForeground: Color = Color.valueOf(Color.WHITE)
-
-        /**
-         * Default text in the unknown images.
-         */
-        private val UnknownImageText: String = "?"
-
-        /**
-         * Unknown image.
-         */
-        private val UnknownImage: Bitmap = ImageUtils.textImage(
-            CodeInfo.UnknownImageWidth,
-            CodeInfo.UnknownImageHeight,
-            CodeInfo.UnknownImageBackground,
-            CodeInfo.UnknownImageForeground,
-            CodeInfo.UnknownImageText
-        )
-
-        /**
-         * Creates wrapper of the code information from raw barcode.
-         * @param barcode Raw barcode data.
-         */
-        public fun fromRawbarcode(barcode: RawBarcode): CodeInfo{
-            var image: Bitmap = CodeInfo.UnknownImage
-            if (barcode.image != null){
-                val bcodeImg: Image = barcode.image
-                val bcodeBmap: Bitmap? = ImageUtils.toBitmap(bcodeImg)
-                if (bcodeBmap != null){
-                    image = bcodeBmap
-                }
-            }
-            return CodeInfo(
-                LocalDateTime.now(),
-                CodeType.fromBarcode(barcode.barcode),
-                image,
-                barcode.position.toRectangle().toRect(),
-                DataType.fromBarcode(barcode.barcode),
-                barcode.barcode.rawValue ?: "",
-                barcode.barcode.rawBytes?.size?.toDouble() ?: 0.0,
-                MapUtils.barcodeToMap(barcode.barcode)
-            )
-        }
+    /**
+     * Gets raw data in binary form.
+     * @return Array of bytes with data in binary form.
+     */
+    public fun getRawBytes(): ByteArray{
+        return this.rawBytes
     }
 
-
+    /**
+     * Gets raw data in form of base64 encoded string.
+     * @return String representing raw binary data in form of base64 encoded string.
+     */
+    public fun getRawBase64(): String{
+        return Base64.encodeToString(this.rawBytes, Base64.DEFAULT).trim()
+    }
 }

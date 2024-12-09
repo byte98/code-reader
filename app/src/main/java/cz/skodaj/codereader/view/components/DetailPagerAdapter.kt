@@ -1,13 +1,19 @@
 package cz.skodaj.codereader.view.components
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.RectF
+import android.util.Log
+import androidx.core.graphics.toRectF
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import cz.skodaj.codereader.model.Code
 import cz.skodaj.codereader.model.CodeInfo
+import cz.skodaj.codereader.model.DataType
 import cz.skodaj.codereader.model.preferences.PreferencesSet
 import cz.skodaj.codereader.utils.DateUtils
+import cz.skodaj.codereader.utils.ImageUtils
 import cz.skodaj.codereader.utils.StringUtils
 
 /**
@@ -57,8 +63,101 @@ class DetailPagerAdapter: FragmentStateAdapter {
     override fun getItemCount(): Int = 3 // There are only three tabs: info, data and source
 
     override fun createFragment(position: Int): Fragment {
-        // TODO: Implement other two fragments
-        return this.getInfoFragment()
+        var reti: Fragment = this.getInfoFragment()
+        when (position){
+            0 -> reti = this.getInfoFragment()
+            1 -> reti = this.getDataFragment()
+            2 -> reti = this.getSourceFragment()
+            else -> reti = this.getInfoFragment()
+        }
+        return reti
+    }
+
+    /**
+     * Gets fragment with source of code.
+     * @return Fragment with source of code.
+     */
+    private fun getSourceFragment(): DetailSourceFragment{
+        var image: Bitmap = ImageUtils.getUnknownImage(this.context)
+        var pos: RectF = RectF(0f, 0f, 0f, 0f)
+        if (this.code != null){
+            image = this.code.getImage() ?: ImageUtils.getUnknownImage(this.context)
+            pos  = this.code.getPosition().toRectF()
+        }
+        else if (this.info != null){
+            image = this.info.getImage() ?: ImageUtils.getUnknownImage(this.context)
+            pos = this.info.getPosition().toRectF()
+        }
+        return DetailSourceFragment.newInstance(image, pos)
+    }
+
+    /**
+     * Gets fragment with data of code.
+     * @return Fragment with data of code.
+     */
+    private fun getDataFragment(): DetailDataFragment{
+        var type: String = StringUtils.translate(this.context, DataType.UNKNOWN.toTranslatableString())
+        var rawData: String = ""
+        var dataFields: MutableMap<String, String> = mutableMapOf()
+        if (this.info != null){
+            type = StringUtils.translate(this.context, this.info.getDataType().toTranslatableString())
+            rawData = this.info.getData()
+            if (rawData.length == 0){
+                rawData = this.info.getRawBase64()
+            }
+            if (this.info.hasDataFields()){
+                for(field in this.info.getDataFields()){
+                    var fieldVal: String? = this.info.getDataField(field)
+                    if (fieldVal != null){
+                        val fPhrase: String = "V_${fieldVal}"
+                        val fTrans: String = StringUtils.translate(this.context, fPhrase)
+                        if (fPhrase != fTrans){
+                            fieldVal = fTrans
+                        }
+                    }
+                    if (fieldVal != null && fieldVal.length > 0){
+                        val phrase: String = "F_${field.uppercase()}"
+                        val translation: String = StringUtils.translate(this.context, phrase)
+                        if (translation == phrase){
+                            dataFields.put(field.replaceFirstChar { c -> c.uppercase() }, fieldVal)
+                        }
+                        else{
+                            dataFields.put(translation, fieldVal)
+                        }
+                    }
+                }
+            }
+        }
+        else if (this.code != null){
+            type = StringUtils.translate(this.context, this.code.getDataType().toTranslatableString())
+            rawData = this.code.getData()
+            if (rawData.length == 0){
+                rawData = this.code.getRawBase64()
+            }
+            if (this.code.hasDataFields()){
+                for(field in this.code.getDataFields()){
+                    var fieldVal: String? = this.code.getDataField(field)
+                    if (fieldVal != null){
+                        val fPhrase: String = "V_${fieldVal}"
+                        val fTrans: String = StringUtils.translate(this.context, fPhrase)
+                        if (fPhrase != fTrans){
+                            fieldVal = fTrans
+                        }
+                    }
+                    if (fieldVal != null && fieldVal.length > 0){
+                        val phrase: String = "F_${field.uppercase()}"
+                        val translation: String = StringUtils.translate(this.context, phrase)
+                        if (translation == phrase){
+                            dataFields.put(field.replaceFirstChar { c -> c.uppercase() }, fieldVal)
+                        }
+                        else{
+                            dataFields.put(translation, fieldVal)
+                        }
+                    }
+                }
+            }
+        }
+        return DetailDataFragment.newInstance(rawData, type, dataFields)
     }
 
     /**

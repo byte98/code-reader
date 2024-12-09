@@ -5,7 +5,9 @@
       <map>
         <entry key="..\:/owncloud/private/CODES/code-reader/app/src/main/res/drawable-night/circle.xml" value="0.318" />
         <entry key="..\:/owncloud/private/CODES/code-reader/app/src/main/res/drawable/circle.xml" value="0.318" />
+        <entry key="..\:/owncloud/private/CODES/code-reader/app/src/main/res/drawable/cursor.xml" value="0.301" />
         <entry key="..\:/owncloud/private/CODES/code-reader/app/src/main/res/drawable/icon_torch_on.xml" value="0.318" />
+        <entry key="..\:/owncloud/private/CODES/code-reader/app/src/main/res/drawable/image_placeholder.xml" value="0.16" />
         <entry key="..\:/owncloud/private/CODES/code-reader/app/src/main/res/drawable/seek_progress.xml" value="0.492" />
         <entry key="..\:/owncloud/private/CODES/code-reader/app/src/main/res/drawable/seek_thumb.xml" value="0.492" />
         <entry key="..\:/owncloud/private/CODES/code-reader/app/src/main/res/font/clearsans.xml" value="0.35208333333333336" />
@@ -16,6 +18,8 @@
         <entry key="..\:/owncloud/private/CODES/code-reader/app/src/main/res/layout/activity_main.xml" value="0.33" />
         <entry key="..\:/owncloud/private/CODES/code-reader/app/src/main/res/layout/fragment_detail_data.xml" value="0.5217391304347826" />
         <entry key="..\:/owncloud/private/CODES/code-reader/app/src/main/res/layout/fragment_detail_info.xml" value="0.3098958333333333" />
+        <entry key="..\:/owncloud/private/CODES/code-reader/app/src/main/res/layout/fragment_detail_source.xml" value="0.33" />
+        <entry key="..\:/owncloud/private/CODES/code-reader/app/src/main/res/layout/fragment_detail_source_fragmentis.xml" value="0.1935185185185185" />
         <entry key="..\:/owncloud/private/CODES/code-reader/app/src/main/res/layout/page_detail_data.xml" value="0.2984375" />
         <entry key="..\:/owncloud/private/CODES/code-reader/app/src/main/res/layout/page_detail_information.xml" value="0.5217391304347826" />
         <entry key="..\:/owncloud/private/CODES/code-reader/app/src/main/res/layout/page_detil_information.xml" value="0.2984375" />

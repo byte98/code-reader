@@ -1,5 +1,7 @@
 package cz.skodaj.codereader.view
 
+import android.graphics.Bitmap
+import android.icu.text.SimpleDateFormat
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.format.DateFormat
@@ -17,8 +19,12 @@ import cz.skodaj.codereader.model.messaging.Receiver
 import cz.skodaj.codereader.model.messaging.messages.*
 import cz.skodaj.codereader.model.preferences.PreferencesSet
 import cz.skodaj.codereader.utils.DateUtils
+import cz.skodaj.codereader.utils.ImageUtils
 import cz.skodaj.codereader.utils.StringUtils
 import cz.skodaj.codereader.view.components.DetailPagerAdapter
+import java.io.File
+import java.io.FileOutputStream
+import java.util.*
 
 class DetailActivity : MessagingActivity(), Receiver {
 
@@ -74,18 +80,9 @@ class DetailActivity : MessagingActivity(), Receiver {
      * @param info Object with information about code.
      */
     private fun initCodeInfo(info: CodeInfo){
-
-        /*
-        this.viewBinding.detailTextViewDate.text = DateUtils.format(info.getCreationDate(), PreferencesSet.of(this))
-        val codeType: String = "ct_${info.getCodeType().toString()}".uppercase()
-        val dataType: String = "dt_${info.getDataType().toString()}".uppercase()
-        this.viewBinding.detailTextViewType.text = this.getString(this.resources.getIdentifier(codeType, "string", this.packageName))
-        this.viewBinding.detailTextViewDataType.text = this.getString(this.resources.getIdentifier(dataType, "string", this.packageName))
-        this.viewBinding.detailTextViewDataSize.text = info.getSizeString()*/
-        // TODO: Implement this using ViewPage2
-
         val adapter: DetailPagerAdapter = DetailPagerAdapter(this, info, this)
         this.viewBinding.detailViewPager.setAdapter(adapter)
+
 
         TabLayoutMediator(this.viewBinding.detailTabLayout, this.viewBinding.detailViewPager){tab, position ->
             tab.setText(when(position){

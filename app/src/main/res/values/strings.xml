@@ -16,25 +16,27 @@
     <string name="creation_date">Date of creation</string>
     <string name="data_type">Data type</string>
     <string name="raw_value">Raw value</string>
+    <string name="data_fields">Data fields</string>
     <string name="name">Name</string>
     <string name="description">Description</string>
     <string name="location">Location</string>
     <string name="modification_date">Date of last modification</string>
+    <string name="raw_data">Raw data</string>
 
 
     <!-- Code types translations -->
     <string name="CT_UNKNOWN">Unknown</string>
-    <string name="CT_CODE_128">Barcode 128 (ISO/IEC 15417:2007)</string>
-    <string name="CT_CODE_39">Barcode 3 of 9 (ISO/IEC 16388:2007)</string>
-    <string name="CT_CODE_93">Barcode 93 (INTERMEC)</string>
+    <string name="CT_CODE128">Barcode 128 (ISO/IEC 15417:2007)</string>
+    <string name="CT_CODE39">Barcode 3 of 9 (ISO/IEC 16388:2007)</string>
+    <string name="CT_CODE93">Barcode 93 (INTERMEC)</string>
     <string name="CT_CODABAR">Code 2 of 7 (codabar)</string>
-    <string name="CT_DATA_MATRIX">Data matrix</string>
-    <string name="CT_EAN_13">EAN barcode (13 digit)</string>
-    <string name="CT_EAN_8">EAN barcode (8 digit)</string>
+    <string name="CT_DM">Data matrix</string>
+    <string name="CT_EAN13">EAN barcode (13 digit)</string>
+    <string name="CT_EAN8">EAN barcode (8 digit)</string>
     <string name="CT_ITF">Interleaved 2 of 5 (ITF)</string>
-    <string name="CT_QR_CODE">QR code</string>
-    <string name="CT_UPC_A">Universal product code (UPC-A)</string>
-    <string name="CT_UPC_E">Universal product code - short (UPC-E)</string>
+    <string name="CT_QR">QR code</string>
+    <string name="CT_UPCA">Universal product code (UPC-A)</string>
+    <string name="CT_UPCE">Universal product code - short (UPC-E)</string>
     <string name="CT_PDF417">Portable Data File barcode (PDF417)</string>
     <string name="CT_AZTEC">Aztec matrix code</string>
 
@@ -52,6 +54,57 @@
     <string name="DT_GEO">Geographic coordinates</string>
     <string name="DT_CALENDAR">Calendar events</string>
     <string name="DT_DRIVER">Driver\'s license data</string>
+
+    <!-- Data fields translations -->
+    <string name="F_DESCRIPTION">Description</string>
+    <string name="F_LOCATION">Location</string>
+    <string name="F_ORGANIZER">Organizer</string>
+    <string name="F_STATUS">Status</string>
+    <string name="F_SUMMARY">Summary</string>
+    <string name="F_START">Start</string>
+    <string name="F_END">End</string>
+    <string name="F_NAME">Name</string>
+    <string name="F_ORGANIZATION">Organization</string>
+    <string name="F_TITLE">Title</string>
+    <string name="F_ADDRESS">Address</string>
+    <string name="F_EMAIL">E-mail</string>
+    <string name="F_PHONE">Phone number</string>
+    <string name="F_URL">URL</string>
+    <string name="F_ADDRESSCITY">City</string>
+    <string name="F_ADDRESSSTATE">State</string>
+    <string name="F_ADDRESSZIP">ZIP code</string>
+    <string name="F_BIRTHDATE">Date of birth</string>
+    <string name="F_DOCUMENTTYPE">Type of document</string>
+    <string name="F_EXPIRYDATE">Date of expiration</string>
+    <string name="F_FIRSTNAME">First name</string>
+    <string name="F_GENDER">Gender</string>
+    <string name="F_ISSUEDATE">Date of issue</string>
+    <string name="F_ISSUINGCOUNTRY">Country of issue</string>
+    <string name="F_LASTNAME">Last name</string>
+    <string name="F_LICENSENUMBER">Number of license</string>
+    <string name="F_MIDDLENAME">Middle name</string>
+    <string name="F_BODY">Body</string>
+    <string name="F_SUBJECT">Subject</string>
+    <string name="F_TYPEID">ID of type</string>
+    <string name="F_TYPENAME">Name of type</string>
+    <string name="F_LATITUDE">Latitude</string>
+    <string name="F_LONGITUDE">Longitude</string>
+    <string name="F_PHONENUMBER">Phone number</string>
+    <string name="F_MESSAGE">Message</string>
+    <string name="F_PASSWORD">Password</string>
+    <string name="F_SSID">Name of network (SSID)</string>
+    <string name="F_ENCRYPTIONTYPEID">ID of type of encryption</string>
+    <string name="F_ENCRIPTIONTYPENAME">Name of type of encryption</string>
+
+    <!-- Data fields values translations -->
+    <string name="V_HOME">Home</string>
+    <string name="V_WORK">Work</string>
+    <string name="V_UNKNOWN">Unknown</string>
+    <string name="V_FAX">Fax</string>
+    <string name="V_MOBILE">Mobile</string>
+    <string name="V_OPEN">None (open network)</string>
+    <string name="V_WEP">WEP</string>
+    <string name="V_WPA">WPA</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 

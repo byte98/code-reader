@@ -2,6 +2,7 @@ package cz.skodaj.codereader.utils
 
 import com.google.mlkit.vision.barcode.BarcodeScannerOptions
 import com.google.mlkit.vision.barcode.common.Barcode
+import cz.skodaj.codereader.configuration.Globals
 
 /**
  * Object which contains some utility functions to work with maps.
@@ -48,7 +49,7 @@ object MapUtils {
                 if (record.length > 1) {
                     val data: List<String> = record.split(this.KeySeparator)
                     if (data.size == 2){
-                        reti.put(data.get(1), data.get(2))
+                        reti.put(data.get(0), data.get(1))
                     }
                 }
             }
@@ -78,12 +79,12 @@ object MapUtils {
             reti.put("name", info?.name?.formattedName ?: " ")
             reti.put("organization", info?.organization ?: " ")
             reti.put("title", info?.title ?: " ")
-            reti.put("address", info?.addresses?.joinToString("\r\n\r\n") {
-                it.addressLines.joinToString("\r\n")
+            reti.put("address", info?.addresses?.joinToString("${Globals.NEWLINE}${Globals.NEWLINE}") {
+                it.addressLines.joinToString("\"${Globals.NEWLINE}")
             } ?: " ")
-            reti.put("email", info?.emails?.joinToString("\r\n") ?: " ")
-            reti.put("phone", info?.phones?.joinToString("\r\n") ?: " ")
-            reti.put("url", info?.urls?.joinToString("\r\n") ?: " ")
+            reti.put("email", info?.emails?.joinToString("\"${Globals.NEWLINE}") ?: " ")
+            reti.put("phone", info?.phones?.joinToString("\"${Globals.NEWLINE}") ?: " ")
+            reti.put("url", info?.urls?.joinToString("\"${Globals.NEWLINE}") ?: " ")
         }
         else if (barcode.valueType == Barcode.TYPE_DRIVER_LICENSE){
             val info: Barcode.DriverLicense? = barcode.driverLicense

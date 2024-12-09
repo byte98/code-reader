@@ -5,9 +5,8 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.graphics.Bitmap
 import android.graphics.Rect
-import android.media.Image
+import android.util.Base64
 import androidx.core.database.getDoubleOrNull
-import androidx.core.database.getIntOrNull
 import androidx.core.database.getLongOrNull
 import androidx.core.database.getStringOrNull
 import cz.skodaj.codereader.model.*
@@ -98,10 +97,11 @@ class CodeService(
         creationDate: LocalDateTime,
         modificationDate: LocalDateTime,
         codeType: CodeType,
-        image: Bitmap,
+        image: Bitmap?,
         position: Rect,
         dataType: DataType,
         data: String,
+        rawData: ByteArray,
         size: Double,
         dataFields: Map<String, String> = emptyMap()
     ): Code?{
@@ -115,10 +115,13 @@ class CodeService(
                 put(CodeContract.CodeEntry.COLUMN_CREATED, DateUtils.datetimeToDouble(creationDate))
                 put(CodeContract.CodeEntry.COLUMN_MODIFIED, DateUtils.datetimeToDouble(modificationDate))
                 put(CodeContract.CodeEntry.COLUMN_CODETYPE, codeType.toString())
-                put(CodeContract.CodeEntry.COLUMN_IMAGE, ImageUtils.toBase64(image))
+                if (image != null){
+                    put(CodeContract.CodeEntry.COLUMN_IMAGE, ImageUtils.toBase64(image))
+                }
                 put(CodeContract.CodeEntry.COLUMN_POSITION, CodeService.positionToString(position))
                 put(CodeContract.CodeEntry.COLUMN_DATATYPE, dataType.toString())
                 put(CodeContract.CodeEntry.COLUMN_DATA, data)
+                put(CodeContract.CodeEntry.COLUMN_BINARY_DATA, Base64.encodeToString(rawData, Base64.DEFAULT).trim())
                 put(CodeContract.CodeEntry.COLUMN_DATAFIELDS, MapUtils.toString(dataFields))
                 put(CodeContract.CodeEntry.COLUMN_SIZE, size)
             }
@@ -136,6 +139,7 @@ class CodeService(
                     position,
                     dataType,
                     data,
+                    rawData,
                     size,
                     dataFields
                 )
@@ -174,6 +178,7 @@ class CodeService(
             info.getPosition(),
             info.getDataType(),
             info.getData(),
+            info.getRawBytes(),
             info.getSize(),
             fields
         )
@@ -270,6 +275,7 @@ class CodeService(
         var rawposition: String? = null
         var rawdataType: String? = null
         var rawdata: String? = null
+        var rawbinaryData: String? = null
         var rawdataFields: String? = null
         var rawSize: Double? = null
 
@@ -285,6 +291,7 @@ class CodeService(
         var position: Rect? = null
         var dataType: DataType? = null
         var data: String? = null
+        var binaryData: ByteArray = ByteArray(0)
         var dataFields: Map<String, String>? = null
         var size: Double? = null
 
@@ -300,6 +307,7 @@ class CodeService(
         rawposition = cursor.getStringOrNull(cursor.getColumnIndexOrThrow(CodeContract.CodeEntry.COLUMN_POSITION))
         rawdataType = cursor.getStringOrNull(cursor.getColumnIndexOrThrow(CodeContract.CodeEntry.COLUMN_DATATYPE))
         rawdata = cursor.getStringOrNull(cursor.getColumnIndexOrThrow(CodeContract.CodeEntry.COLUMN_DATA))
+        rawbinaryData = cursor.getStringOrNull(cursor.getColumnIndexOrThrow(CodeContract.CodeEntry.COLUMN_BINARY_DATA))
         rawdataFields = cursor.getStringOrNull(cursor.getColumnIndexOrThrow(CodeContract.CodeEntry.COLUMN_DATAFIELDS))
         rawSize = cursor.getDoubleOrNull(cursor.getColumnIndexOrThrow(CodeContract.CodeEntry.COLUMN_SIZE))
 
@@ -311,10 +319,11 @@ class CodeService(
         if (rawcreationDate != null) creationDate = DateUtils.datetimeFromDouble(rawcreationDate)
         if (rawmodificationDate != null) modificationDate = DateUtils.datetimeFromDouble(rawmodificationDate)
         if (rawcodeType != null) codeType = CodeType.fromString(rawcodeType)
-        if (rawimage != null) image = ImageUtils.toImage(rawimage)
+        if (rawimage != null) image = ImageUtils.toBitmap(rawimage)
         if (rawposition != null) position = CodeService.stringToPosision(rawposition)
         if (rawdataType != null) dataType = DataType.fromString(rawdataType)
         if (rawdata != null) data = rawdata
+        if (rawbinaryData != null) binaryData = Base64.decode(rawbinaryData, Base64.DEFAULT)
         if (rawdataFields != null) dataFields = MapUtils.fromString(rawdataFields) else dataFields = emptyMap()
         if (rawSize != null) size = rawSize
 
@@ -332,10 +341,11 @@ class CodeService(
             position != null &&
             dataType != null &&
             data != null &&
+            binaryData != null &&
             dataFields != null &&
             size != null
         ){
-            reti = Code(id, folder, name, description, creationDate, modificationDate, codeType, image, position, dataType, data, size, dataFields)
+            reti = Code(id, folder, name, description, creationDate, modificationDate, codeType, image, position, dataType, data, binaryData, size, dataFields)
         }
         return reti
     }
@@ -351,6 +361,7 @@ class CodeService(
             for(key: String in code.getDataFields()){
                 dataFields.put(key, code.getDataField(key) ?: "")
             }
+            val image: Bitmap? = code.getImage()
             val data: ContentValues = ContentValues().apply {
                 put(CodeContract.CodeEntry.COLUMN_FOLDER, code.getFolder().getId())
                 put(CodeContract.CodeEntry.COLUMN_NAME, code.getName())
@@ -358,10 +369,13 @@ class CodeService(
                 put(CodeContract.CodeEntry.COLUMN_CREATED, DateUtils.datetimeToDouble(code.getCreationDate()))
                 put(CodeContract.CodeEntry.COLUMN_MODIFIED, DateUtils.datetimeToDouble(code.getModificationDate()))
                 put(CodeContract.CodeEntry.COLUMN_CODETYPE, code.getCodeType().toString())
-                put(CodeContract.CodeEntry.COLUMN_IMAGE, ImageUtils.toBase64(code.getImage()))
+                if (image != null){
+                    put(CodeContract.CodeEntry.COLUMN_IMAGE, ImageUtils.toBase64(image))
+                }
                 put(CodeContract.CodeEntry.COLUMN_POSITION, CodeService.positionToString(code.getPosition()))
                 put(CodeContract.CodeEntry.COLUMN_DATATYPE, code.getDataType().toString())
                 put(CodeContract.CodeEntry.COLUMN_DATA, code.getData())
+                put(CodeContract.CodeEntry.COLUMN_BINARY_DATA, code.getRawBase64())
                 put(CodeContract.CodeEntry.COLUMN_DATAFIELDS, MapUtils.toString(dataFields))
                 put(CodeContract.CodeEntry.COLUMN_SIZE, code.getSize())
             }

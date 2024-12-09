@@ -50,4 +50,12 @@
         <item name="android:textFontWeight">@integer/fontLight</item>
     </style>
 
+    <style name="MetroEditText" parent="Widget.AppCompat.EditText">
+            <item name="android:background">@android:color/transparent</item>
+            <item name="android:textColorHint">@android:color/transparent</item>
+            <item name="android:textSize">16sp</item>
+            <item name="android:textCursorDrawable">@drawable/cursor</item>
+            <item name="android:colorControlActivated">@color/colorAccent</item>
+    </style>
+
 </resources>

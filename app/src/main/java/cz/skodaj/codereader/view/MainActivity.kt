@@ -39,6 +39,7 @@ import android.widget.SeekBar
 import androidx.activity.result.ActivityResultLauncher
 import androidx.camera.core.*
 import androidx.core.app.ActivityManagerCompat
+import androidx.core.graphics.toRectF
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -238,14 +239,14 @@ class MainActivity : MessagingActivity() {
                     this.viewBinding.mainPreviewView.width,
                     this.viewBinding.mainPreviewView.height
                 )
-                val rectF = code.position.toRectangle(previewSize)
+                val rectF: RectF = code.getPosition().toRectF()
                 this.viewBinding.mainRectangleView.setRectangle(rectF)
                 val intent: Intent = Intent(this, DetailActivity::class.java).apply {
                     flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
                 }
                 Messenger.default.send(CameraEnabledMessage(enabled = false))
                 Messenger.default.sendDelayed(DetailActivity::class, CodeInfoMessage(
-                    CodeInfo.fromRawbarcode(code)
+                    code
                 ))
                 Messenger.default.registerOnce(DetailActivityFinishedMessage::class,
                     object : Receiver {

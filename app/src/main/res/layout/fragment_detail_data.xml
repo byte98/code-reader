@@ -1,14 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".DetailDataFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".view.components.DetailDataFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-</FrameLayout>
+        <!-- Data type -->
+        <TextView
+            android:id="@+id/detailTextViewDataTypeHeader"
+            style="@style/DetailTitleTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/data_type" />
+        <TextView
+            android:id="@+id/detailTextViewDataType"
+            style="@style/DetailValueTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/unknown" />
+
+        <!-- Data fields -->
+        <LinearLayout
+            android:id="@+id/detailDataFields"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+
+        <!-- Raw data -->
+        <TextView
+            android:id="@+id/detailTextViewRawDataHeader"
+            style="@style/DetailTitleTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/raw_data" />
+        <EditText
+            android:id="@+id/detailTextViewRawData"
+            style="@style/MetroEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="none"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:clickable="true"
+            android:longClickable="true"
+            android:textIsSelectable="true"
+            android:background="@android:color/transparent"
+            android:textSize="20sp"
+            android:breakStrategy="high_quality"
+            android:scrollHorizontally="false"
+            android:gravity="start|top"
+            android:editable="false"
+            app:fontFamily="@font/ubuntu_mono"/>
+
+
+    </LinearLayout>
+</ScrollView>

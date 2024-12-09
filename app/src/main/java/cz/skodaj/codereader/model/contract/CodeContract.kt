@@ -73,6 +73,11 @@ object CodeContract {
         public final const val COLUMN_DATA: String = "DATA"
 
         /**
+         * Name of column with binary data of code.
+         */
+        public final const val COLUMN_BINARY_DATA: String = "BIN"
+
+        /**
          * Name of column with data fields of code.
          */
         public final const val COLUMN_DATAFIELDS: String = "FIELDS"
@@ -97,6 +102,7 @@ object CodeContract {
             CodeContract.CodeEntry.COLUMN_POSITION,
             CodeContract.CodeEntry.COLUMN_DATATYPE,
             CodeContract.CodeEntry.COLUMN_DATA,
+            CodeContract.CodeEntry.COLUMN_BINARY_DATA,
             CodeContract.CodeEntry.COLUMN_DATAFIELDS,
             CodeContract.CodeEntry.COLUMN_SIZE
         )
@@ -114,10 +120,11 @@ object CodeContract {
                 "${CodeContract.CodeEntry.COLUMN_CREATED} REAL NOT NULL, " +
                 "${CodeContract.CodeEntry.COLUMN_MODIFIED} REAL NOT NULL, " +
                 "${CodeContract.CodeEntry.COLUMN_CODETYPE} TEXT NOT NULL, " +
-                "${CodeContract.CodeEntry.COLUMN_IMAGE} TEXT NOT NULL, " +
+                "${CodeContract.CodeEntry.COLUMN_IMAGE} TEXT, " +
                 "${CodeContract.CodeEntry.COLUMN_POSITION} TEXT NOT NULL, " +
                 "${CodeContract.CodeEntry.COLUMN_DATATYPE} TEXT NOT NULL, " +
                 "${CodeContract.CodeEntry.COLUMN_DATA} TEXT NOT NULL, " +
+                "${CodeContract.CodeEntry.COLUMN_BINARY_DATA} TEXT NOT NULL, " +
                 "${CodeContract.CodeEntry.COLUMN_DATAFIELDS} TEXT NOT NULL ," +
                 "${CodeContract.CodeEntry.COLUMN_SIZE} INTEGER NOT NULL" +
         ")"

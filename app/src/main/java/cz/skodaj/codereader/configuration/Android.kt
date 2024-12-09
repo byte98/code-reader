@@ -12,13 +12,9 @@ object Android {
      * Array of all required permissions.
      */
     public final val PERMISSIONS: Array<String> = mutableListOf<String>(
-            Manifest.permission.CAMERA
+            Manifest.permission.CAMERA,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
         )
-        .apply{
-            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P){
-                add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-            }
-        }
         .toTypedArray()
 
 }

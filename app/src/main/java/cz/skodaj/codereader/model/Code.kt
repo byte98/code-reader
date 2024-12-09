@@ -48,6 +48,7 @@ class Code: CodeInfo{
      * @param position Position of the code in the image.
      * @param dataType Type of data stored in code.
      * @param data Data stored in code.
+     * @param bytes: Raw data in binary form.
      * @param size Size of data stored in code.
      * @param dataFields Fields of data stored in code (if available).
      */
@@ -59,13 +60,14 @@ class Code: CodeInfo{
         creationDate: LocalDateTime,
         modificationDate: LocalDateTime,
         codeType: CodeType,
-        image: Bitmap,
+        image: Bitmap?,
         position: Rect,
         dataType: DataType,
         data: String,
+        bytes: ByteArray,
         size: Double,
         dataFields: Map<String, String> = emptyMap()
-    ): super(creationDate, codeType, image, position, dataType, data, size, dataFields){
+    ): super(creationDate, codeType, image, position, dataType, data, bytes, size, dataFields){
         this.id = id
         this.folder = folder
         this.name = name
