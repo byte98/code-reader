@@ -91,36 +91,52 @@ class ScannerHelper: CameraHelper, ImageAnalysis.Analyzer, Receiver{
                 val task = this.scanner.process(image)
                     .addOnSuccessListener {
                         if (it.isNotEmpty()) {
-                            val imgH: Int = mediaImage.height
-                            val imgW: Int = mediaImage.width
-                            val rotationDegrees = imageProxy.imageInfo.rotationDegrees
-                            val isLandscape = rotationDegrees == 90 || rotationDegrees == 270
-                            val bitmap = ImageUtils.toBitmap(mediaImage)?.let {
-                                if (isLandscape) {
-                                    ImageUtils.rotate(it, rotationDegrees.toFloat())
-                                } else it
+                            var barcode: Barcode = it.first()
+                            var found: Boolean = false
+                            for(bcode: Barcode in it){
+                                if (bcode.rawBytes != null && bcode.rawBytes?.size ?: 0 > 0){
+                                    barcode = bcode
+                                    found = true
+                                    break
+                                }
                             }
-                            val barcode: Barcode = it.first()
-                            val rect: Rect = barcode.boundingBox ?: Rect(0, 0, 0, 0)
-                            if (barcode != null && rect != null) {
-                                this.code.setValue(
-                                    CodeInfo(
-                                        LocalDateTime.now(),
-                                        CodeType.fromBarcode(barcode),
-                                        bitmap,
-                                        rect,
-                                        DataType.fromBarcode(barcode),
-                                        barcode.rawValue ?: "",
-                                        barcode.rawBytes ?: ByteArray(0),
-                                        barcode.rawBytes?.size?.toDouble() ?: 0.0,
-                                        MapUtils.barcodeToMap(barcode)
+                            if (found) {
+                                val imgH: Int = mediaImage.height
+                                val imgW: Int = mediaImage.width
+                                val rotationDegrees = imageProxy.imageInfo.rotationDegrees
+                                val isLandscape = rotationDegrees == 90 || rotationDegrees == 270
+                                val bitmap = ImageUtils.toBitmap(mediaImage)?.let {
+                                    if (isLandscape) {
+                                        ImageUtils.rotate(it, rotationDegrees.toFloat())
+                                    } else it
+                                }
+                                val rect: Rect = barcode.boundingBox ?: Rect(0, 0, 0, 0)
+                                if (barcode != null && rect != null) {
+                                    this.code.setValue(
+                                        CodeInfo(
+                                            LocalDateTime.now(),
+                                            CodeType.fromBarcode(barcode),
+                                            bitmap,
+                                            rect,
+                                            DataType.fromBarcode(barcode),
+                                            barcode.rawValue ?: "",
+                                            barcode.rawBytes ?: ByteArray(0),
+                                            barcode.rawBytes?.size?.toDouble() ?: 0.0,
+                                            MapUtils.barcodeToMap(barcode)
+                                        )
                                     )
-                                )
-                                Log.d(this::class.qualifiedName, "Found code. Image size (h×w): ${imgH}×${imgW}. Code location: ${rect}")
-                                Log.d(this::class.qualifiedName, "Code data (${barcode.rawValue?.length ?: 0}): ${barcode.rawValue}")
-                                Messenger.default.send(CodeScannedMessage(true))
-                            } else {
-                                this.code.setValue(null)
+                                    Log.d(
+                                        this::class.qualifiedName,
+                                        "Found code. Image size (h×w): ${imgH}×${imgW}. Code location: ${rect}"
+                                    )
+                                    Log.d(
+                                        this::class.qualifiedName,
+                                        "Code data (${barcode.rawValue?.length ?: 0}): ${barcode.rawValue}"
+                                    )
+                                    Messenger.default.send(CodeScannedMessage(true))
+                                } else {
+                                    this.code.setValue(null)
+                                }
                             }
                         } else {
                             this.code.setValue(null)

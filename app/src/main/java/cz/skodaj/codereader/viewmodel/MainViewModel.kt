@@ -1,6 +1,7 @@
 package cz.skodaj.codereader.viewmodel
 
 import android.content.Context
+import android.view.ScaleGestureDetector
 import androidx.camera.core.Camera
 import androidx.camera.core.ExperimentalGetImage
 import androidx.lifecycle.LiveData
@@ -12,6 +13,7 @@ import cz.skodaj.codereader.model.messaging.messages.CodeScannedMessage
 import cz.skodaj.codereader.utils.FlashlightHelper
 import cz.skodaj.codereader.utils.ScannerHelper
 import cz.skodaj.codereader.utils.ZoomHelper
+import cz.skodaj.codereader.viewmodel.connectors.ZoomConnector
 import java.util.*
 
 /**
@@ -29,6 +31,11 @@ class MainViewModel: ViewModel() {
      * Handler of zoom.
      */
     private lateinit var zoom: ZoomHelper
+
+    /**
+     * Connector of zooming to user interface.
+     */
+    private var zoomUI: ZoomConnector? = null
 
     /**
      * Handler of code scanning.
@@ -63,53 +70,21 @@ class MainViewModel: ViewModel() {
     }
 
     /**
-     * Gets actual zoom text.
-     * @return Live data with actual zoom level as a text.
+     * Initializes interface of zooming.
+     * @param context Actual context of the application.
+     * @param ui Actual interface which will be controlled.
+     * @return Detector of scale gesture.
      */
-    public fun getZoomText(): LiveData<String>{
-        return Transformations.map(this.zoom.getLevelInt()) { level ->
-            "$level %"
-        }
+    public fun initZoomUI(context: Context, ui: ZoomConnector.ZoomUI): ScaleGestureDetector{
+        this.zoomUI = ZoomConnector(ui, this.zoom)
+        return this.zoomUI!!.getScaleListener(context)
     }
 
     /**
-     * Gets minimal level of zoom.
-     * @return Minimal zoom ratio supported by camera.
+     * Shows user interface of zooming.
      */
-    public fun getZoomMin(): Float{
-        return this.zoom.getMinLevel()
-    }
-
-    /**
-     * Gets maximal level of zoom.
-     * @return Maximal zoom ratio supported by camera.
-     */
-    public fun getZoomMax(): Float{
-        return this.zoom.getMaxLevel()
-    }
-
-    /**
-     * Gets actual level of zoom.
-     * @return Live data with actual zoom ratio.
-     */
-    public fun getZoomLevel(): LiveData<Float>{
-        return this.zoom.getLevel()
-    }
-
-    /**
-     * Gets actual static level of zoom.
-     * @return Float with actual zoom ratio.
-     */
-    public fun getActualZoomLevel(): Float{
-        return this.zoom.getActualLevel()
-    }
-
-    /**
-     * Sets actual level of zoom.
-     * @param level New level of zoom.
-     */
-    public fun setActualZoomLevel(level: Float){
-        this.zoom.setLevel(level)
+    public fun showZoomUI(){
+        this.zoomUI?.showUI()
     }
 
     /**

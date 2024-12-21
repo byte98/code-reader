@@ -1,6 +1,11 @@
 package cz.skodaj.codereader.utils
 
 import android.content.Context
+import android.view.ViewGroup
+import android.view.animation.Animation
+import android.widget.LinearLayout
+import android.widget.SeekBar
+import android.widget.TextView
 import androidx.camera.core.Camera
 import androidx.camera.core.ZoomState
 import androidx.lifecycle.LiveData
@@ -19,6 +24,8 @@ import kotlin.math.roundToInt
  */
 class ZoomHelper: CameraHelper {
 
+
+
     /**
      * Reference to device camera.
      */
@@ -34,9 +41,11 @@ class ZoomHelper: CameraHelper {
      */
     private val zoomInt: LiveData<Int>
 
+
     /**
      * Creates new handler of camera zoom.
      * @param camera Reference to the camera of the device.
+     * @param setter Setter of actual value of zoom level.
      */
     constructor(camera: Camera): super(){
         this.camera = camera
@@ -46,6 +55,7 @@ class ZoomHelper: CameraHelper {
             (floatVal * 100).roundToInt()
         }
     }
+
 
     /**
      * Gets minimal level of zoom supported by camera.

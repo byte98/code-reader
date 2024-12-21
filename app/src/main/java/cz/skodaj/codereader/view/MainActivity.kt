@@ -1,34 +1,16 @@
 package cz.skodaj.codereader.view
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.Manifest
 import android.animation.Animator
 import android.animation.AnimatorInflater
-import android.app.ActivityManager
-import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.RectF
-import android.icu.number.Scale
-import android.media.Image
-import android.opengl.Visibility
-import android.os.Build
-import android.os.Handler
-import android.os.Looper
-import android.provider.MediaStore
 import android.util.Log
 import android.util.Size
 import android.view.ScaleGestureDetector
-import androidx.camera.video.Recorder
-import androidx.camera.video.Recording
-import androidx.camera.video.VideoCapture
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.lifecycle.ProcessCameraProvider
 import android.view.View
@@ -38,9 +20,9 @@ import android.widget.LinearLayout
 import android.widget.SeekBar
 import androidx.activity.result.ActivityResultLauncher
 import androidx.camera.core.*
-import androidx.core.app.ActivityManagerCompat
+import androidx.camera.view.PreviewView
 import androidx.core.graphics.toRectF
-import androidx.core.view.isVisible
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.google.common.util.concurrent.ListenableFuture
@@ -48,23 +30,18 @@ import cz.skodaj.codereader.R
 
 import cz.skodaj.codereader.databinding.ActivityMainBinding
 import cz.skodaj.codereader.configuration.Android.PERMISSIONS
-import cz.skodaj.codereader.model.CodeInfo
-import cz.skodaj.codereader.model.db.DatabaseFactory
 import cz.skodaj.codereader.model.messaging.Messenger
 import cz.skodaj.codereader.model.messaging.Receiver
 import cz.skodaj.codereader.model.messaging.messages.*
 import cz.skodaj.codereader.model.preferences.PreferencesSet
-import cz.skodaj.codereader.utils.AppStateMonitor
-import cz.skodaj.codereader.utils.DateUtils
 import cz.skodaj.codereader.utils.Initializer
 import cz.skodaj.codereader.viewmodel.MainViewModel
 import cz.skodaj.codereader.viewmodel.ViewModelFactory
+import cz.skodaj.codereader.viewmodel.connectors.ZoomConnector
 import kotlinx.coroutines.Job
-import java.lang.Exception
-import java.util.concurrent.Future
 import kotlin.math.roundToInt
 import kotlinx.coroutines.*
-import java.time.LocalTime
+import kotlin.Exception
 import kotlin.math.min
 
 @ExperimentalGetImage
@@ -90,11 +67,6 @@ class MainActivity : MessagingActivity() {
 
 
     /**
-     * Job which performs hiding of zoom layout.
-     */
-    private var hideZoomLayoutJob: Job? = null
-
-    /**
      * Constant defining precision of zoom seek bar
      */
     private final val ZOOM_PRECISION = 10000
@@ -103,11 +75,6 @@ class MainActivity : MessagingActivity() {
      * Delay between zoom bar show and hide (in milliseconds)
      */
     private final val ZOOM_DELAY: Long = 3000
-
-    /**
-     * Handler of whole application event loop.
-     */
-    private val handler: Handler = Handler(Looper.getMainLooper())
 
     /**
      * Checks, whether user allowed all required permissions.
@@ -135,22 +102,13 @@ class MainActivity : MessagingActivity() {
                 }
             }
             if (permissionGranted == false){
-                this.displayPermissionErrorDialog()
+                Log.e(this::class.qualifiedName, "Permission request failed!")
             }
             else{
                 this.startCamera()
             }
     }
 
-    /**
-     * Displays dialog informing about error during process
-     * of acquiring permissions.
-     */
-    private fun displayPermissionErrorDialog(){
-        Toast.makeText(baseContext,
-            "Permission request denied",
-            Toast.LENGTH_SHORT).show()
-    }
 
     /**
      * Creates new request for permissions.
@@ -162,32 +120,44 @@ class MainActivity : MessagingActivity() {
     /**
      * Starts camera and displays its preview.
      */
-    private fun startCamera(){
-        val cameraProviderFuture: ListenableFuture<ProcessCameraProvider> = ProcessCameraProvider.getInstance(this)
+    private fun startCamera() {
+        Log.d(this::class.qualifiedName, "Starting camera")
+
+        val previewView: PreviewView = this.viewBinding.mainPreviewView
+        val context: Context = this
+        val owner: LifecycleOwner = this
+        val cameraProviderFuture: ListenableFuture<ProcessCameraProvider> = ProcessCameraProvider.getInstance(context)
+
         cameraProviderFuture.addListener({
             val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
-            val preview: Preview = Preview.Builder()
-                .build()
-                .also {
-                    it.setSurfaceProvider(this.viewBinding.mainPreviewView.surfaceProvider)
-                }
             val cameraSelector: CameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
             try{
                 cameraProvider.unbindAll()
-                val analysis: ImageAnalysis = ImageAnalysis.Builder().setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST).build()
-                analysis.setAnalyzer(ContextCompat.getMainExecutor(this), this.viewModel.getScanner())
-                val camera: Camera = cameraProvider.bindToLifecycle(this, cameraSelector, preview, analysis)
-                this.initCamera(camera)
+                val preview: Preview = Preview.Builder().build().also {
+                    it.setSurfaceProvider(previewView.surfaceProvider)
+                }
+                val camera = cameraProvider.bindToLifecycle(
+                    owner,
+                    cameraSelector,
+                    preview
+
+                )
+                this.initCameraViewModel(camera)
+                Log.d(this::class.qualifiedName, "Camera started")
             }
-            catch (ex: Exception){}
-        }, ContextCompat.getMainExecutor(this))
+            catch (e: Exception){
+                Log.e(this::class.qualifiedName, "Start of camera failed: ${e.message}")
+                e.printStackTrace()
+            }
+        }, context.mainExecutor)
     }
 
     /**
-     * Initializes camera.
+     * Initializes camera for view model.
      * @param camera Reference to the camera of the device.
      */
-    private fun initCamera(camera: Camera){
+    private fun initCameraViewModel(camera: Camera){
+        Log.d(this::class.qualifiedName, "Initializing camera for view model...")
         this.viewModel.initCamera(camera, this)
 
         // Flashlight
@@ -198,36 +168,6 @@ class MainActivity : MessagingActivity() {
             this.viewBinding.mainTextViewFlashIcon.setText(icon)
         })
 
-        // Zoom
-        this.viewBinding.mainSeekbarZoom.setMax((this.viewModel.getZoomMax() * this.ZOOM_PRECISION).roundToInt())
-        this.viewBinding.mainSeekbarZoom.setProgress((this.viewModel.getActualZoomLevel() * this.ZOOM_PRECISION).roundToInt())
-        this.viewBinding.mainSeekbarZoom.setMin((this.viewModel.getZoomMin() * this.ZOOM_PRECISION).roundToInt())
-        this.viewModel.getZoomLevel().observe(this, Observer{ level ->
-            this.viewBinding.mainSeekbarZoom.setProgress((level * this.ZOOM_PRECISION).roundToInt())
-        })
-        this.viewBinding.mainSeekbarZoom.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                if ((this@MainActivity.viewModel.getActualZoomLevel() * this@MainActivity.ZOOM_PRECISION).roundToInt() != progress){
-                    this@MainActivity.viewModel.setActualZoomLevel(progress.toFloat() / this@MainActivity.ZOOM_PRECISION.toFloat())
-                }
-            }
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
-        })
-        this.viewModel.getZoomText().observe(this, Observer{text ->
-            this.viewBinding.mainTextViewZoom.setText(text)
-        })
-        this.viewModel.getZoomLevel().observe(this, Observer{
-            if (this.viewBinding.mainLinearLayoutZoom.visibility != View.VISIBLE){
-                this.showZoomLayout(
-                    AnimationUtils.loadAnimation(this, R.anim.fade_in),
-                    AnimationUtils.loadAnimation(this, R.anim.fade_out)
-                )
-            }
-            this.restartHideZoomTimer(
-                AnimationUtils.loadAnimation(this, R.anim.fade_out)
-            )
-        })
 
         // Scanner
         this.viewModel.getScanner().getCode().observe(this, Observer{ code ->
@@ -259,32 +199,27 @@ class MainActivity : MessagingActivity() {
             }
         })
 
-    }
+        // Zoom
+        this.viewBinding.mainLinearLayoutZoom.visibility = View.GONE
+        val detector: ScaleGestureDetector = this.viewModel.initZoomUI(
+            this,
+            ZoomConnector.ZoomUI(
+                this.viewBinding.mainTextViewZoom,
+                this.viewBinding.mainSeekbarZoom,
+                this.viewBinding.mainLinearLayoutZoom,
+                this.ZOOM_PRECISION,
+                this,
+                this.ZOOM_DELAY,
+                AnimationUtils.loadAnimation(this, R.anim.fade_in),
+                AnimationUtils.loadAnimation(this, R.anim.fade_out)
 
-    /**
-     * Shows layout with zoom controls.
-     * @param show Animation used to show layout.
-     * @param hide Animation used to hide layout.
-     */
-    private fun showZoomLayout(show: Animation, hide: Animation){
-        this.viewBinding.mainLinearLayoutZoom.apply{
-            visibility = View.VISIBLE
-            startAnimation(show)
+            )
+        )
+        this.viewBinding.mainPreviewView.setOnTouchListener{_, event ->
+            detector.onTouchEvent(event)
+            return@setOnTouchListener true
         }
-        this.restartHideZoomTimer(hide)
-    }
 
-    /**
-     * Restarts timer for hiding layout with zoom controls.
-     * @param hide Animation used to hide layout.
-     */
-    private fun restartHideZoomTimer(hide: Animation){
-        this.hideZoomLayoutJob?.cancel()
-        this.hideZoomLayoutJob = CoroutineScope(Dispatchers.Main).launch{
-            delay(this@MainActivity.ZOOM_DELAY)
-            this@MainActivity.viewBinding.mainLinearLayoutZoom.startAnimation(hide)
-            this@MainActivity.viewBinding.mainLinearLayoutZoom.visibility = View.GONE
-        }
     }
 
     /**
@@ -336,10 +271,7 @@ class MainActivity : MessagingActivity() {
      * @param view View which has triggered the event.
      */
     public fun mainBottomMenuZoomClicked(view: View){
-        this.showZoomLayout(
-            AnimationUtils.loadAnimation(this, R.anim.fade_in),
-            AnimationUtils.loadAnimation(this, R.anim.fade_out)
-        )
+        this.viewModel.showZoomUI()
     }
 
     //</editor-fold>
@@ -347,14 +279,6 @@ class MainActivity : MessagingActivity() {
     //<editor-fold defaultstate="collapsed" desc="DEFAULT ACTIVITY FUNCTIONS">
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
-        if (this.isTaskRoot == false){
-            val intent: Intent = this.intent
-            if (intent.hasCategory(Intent.CATEGORY_LAUNCHER) && intent.action == Intent.ACTION_MAIN){
-                this.finish()
-                return
-            }
-        }
 
         if (savedInstanceState == null) {
             // Initialize application
@@ -368,40 +292,18 @@ class MainActivity : MessagingActivity() {
         this.viewBinding = ActivityMainBinding.inflate(this.layoutInflater)
         this.setContentView(this.viewBinding.root)
 
-        // Zoom
-        this.viewBinding.mainLinearLayoutZoom.visibility = View.GONE
-        val listener = object: ScaleGestureDetector.SimpleOnScaleGestureListener(){
-            override fun onScale(detector: ScaleGestureDetector): Boolean {
-                if (this@MainActivity.viewBinding.mainLinearLayoutZoom.visibility != View.VISIBLE){
-                    this@MainActivity.showZoomLayout(
-                        AnimationUtils.loadAnimation(this@MainActivity, R.anim.fade_in),
-                        AnimationUtils.loadAnimation(this@MainActivity, R.anim.fade_out)
-                    )
-                }
-                var scale = this@MainActivity.viewModel.getActualZoomLevel() * detector.scaleFactor
-                if (scale < this@MainActivity.viewModel.getZoomMin()) scale = this@MainActivity.viewModel.getZoomMin()
-                if (scale > this@MainActivity.viewModel.getZoomMax()) scale = this@MainActivity.viewModel.getZoomMax()
-                this@MainActivity.viewModel.setActualZoomLevel(scale)
-                return true
-            }
-        }
-        val scaleGestureDetector: ScaleGestureDetector = ScaleGestureDetector(this, listener)
-        this.viewBinding.mainPreviewView.setOnTouchListener{_, event ->
-            scaleGestureDetector.onTouchEvent(event)
-            return@setOnTouchListener true
-        }
 
-        // Set up camera
+
+        // Draw rectangle
+        this.viewBinding.mainRectangleView.setRectangle(this.defaultRectangle())
+
+        // Init permissions
         if (this.checkPermissions()){
             this.startCamera()
         }
         else{
             this.requestPermissions()
         }
-
-        // Draw rectangle
-        this.viewBinding.mainRectangleView.setRectangle(this.defaultRectangle())
-
     }
     //</editor-fold>
 

@@ -1,13 +1,12 @@
 package cz.skodaj.codereader.view.components
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Paint
-import android.graphics.RectF
+import android.graphics.*
+import android.graphics.drawable.ColorDrawable
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
+import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import cz.skodaj.codereader.R
 import kotlin.math.min
@@ -32,31 +31,13 @@ class RectangleImageView @JvmOverloads constructor(
      */
     defStyleAttr: Int = 0
 )
-    : View(context, attrs, defStyleAttr) {
+    : AbstractRectangleView<ImageView>(context, attrs, defStyleAttr) {
 
-    /**
-     * Paint which performs rectangle drawing.
-     */
-    private val paint: Paint = Paint().apply {
-        color = ContextCompat.getColor(context, R.color.colorAccent)
-        style = Paint.Style.STROKE
-        strokeWidth = 8f
-    }
-
-    /**
-     * Actually drawn rectangle.
-     */
-    private var rect: RectF? = null
 
     /**
      * Bitmap to be drawn as the image.
      */
     private var image: Bitmap? = null
-
-    /**
-     * Scale factor for upscaling the view.
-     */
-    private var scaleFactor: Float = 1f
 
     /**
      * Sets the image to be displayed.
@@ -74,45 +55,18 @@ class RectangleImageView @JvmOverloads constructor(
         this.invalidate() // Force redraw
     }
 
-    /**
-     * Sets the rectangle to be drawn on top of the image.
-     * @param rectangle Rectangle to overlay. Passing null will clear the rectangle.
-     */
-    fun setRectangle(rectangle: RectF?) {
-        this.rect = rectangle
-        if (rect == null){
-            Log.d(this::class.qualifiedName, "Rectangle unset")
+    override fun beforeDraw(canvas: Canvas){
+        val backgroundAttr = context.obtainStyledAttributes(
+            intArrayOf(android.R.attr.background)
+        ).use {
+            it.getDrawable(0)
+        }
+        if (this.image != null){
+            val scaledImageRect = RectF(0f, 0f, width.toFloat(), height.toFloat())
+            canvas.drawBitmap(image!!, null, scaledImageRect, null)
         }
         else{
-            Log.d(this::class.qualifiedName, "Rectangle set (${rectangle})")
-        }
-        this.invalidate() // Force redraw
-    }
-
-    override fun onDraw(canvas: Canvas?) {
-        super.onDraw(canvas)
-
-        canvas?.let {
-            if (image != null) {
-                // Draw the image scaled to the view's dimensions
-                val scaledImageRect = RectF(0f, 0f, width.toFloat(), height.toFloat())
-                it.drawBitmap(image!!, null, scaledImageRect, null)
-            } else {
-                // Fill with the background color
-                it.drawColor(ContextCompat.getColor(context, android.R.color.background_light))
-            }
-
-            // Draw the rectangle if it's set
-            rect?.let { rectangle ->
-                // Scale the rectangle to match the scaled image size
-                val scaledRect = RectF(
-                    rectangle.left * scaleFactor,
-                    rectangle.top * scaleFactor,
-                    rectangle.right * scaleFactor,
-                    rectangle.bottom * scaleFactor
-                )
-                it.drawRect(scaledRect, paint)
-            }
+            canvas.drawColor((backgroundAttr as? ColorDrawable)?.color ?: Color.BLACK)
         }
     }
 
@@ -127,11 +81,11 @@ class RectangleImageView @JvmOverloads constructor(
             val parentHeight = MeasureSpec.getSize(heightMeasureSpec)
 
             // Calculate the scale factor to fit the image proportionally inside the parent
-            scaleFactor = min(parentWidth.toFloat() / imageWidth, parentHeight.toFloat() / imageHeight)
+            this.setScale(min(parentWidth.toFloat() / imageWidth, parentHeight.toFloat() / imageHeight))
 
             // Set the new dimensions for this view
-            val scaledWidth = (imageWidth * scaleFactor).toInt()
-            val scaledHeight = (imageHeight * scaleFactor).toInt()
+            val scaledWidth = (imageWidth * this.getScale()).toInt()
+            val scaledHeight = (imageHeight * this.getScale()).toInt()
             setMeasuredDimension(scaledWidth, scaledHeight)
         } ?: run {
             // Default behavior if no image is set
